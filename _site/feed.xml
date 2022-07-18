@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://localhost:4000/portfolio/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/portfolio/" rel="alternate" type="text/html" /><updated>2022-07-18T16:10:46-03:00</updated><id>http://localhost:4000/portfolio/feed.xml</id><title type="html">Jardel Osorio Duarte</title><subtitle>Página destinada a expor alguns projetos e ferramentas qual já tenho certa familiaridade.  Inclúindo: curriculum lattes, publicações relacionadas a minha linha de pesquisa e áreas de interesse.</subtitle><entry><title type="html">Configurando broker Mosquitto (Escalabilidade)</title><link href="http://localhost:4000/portfolio/relatorio" rel="alternate" type="text/html" title="Configurando broker Mosquitto (Escalabilidade)" /><published>2022-04-21T20:24:06-03:00</published><updated>2022-04-21T20:24:06-03:00</updated><id>http://localhost:4000/portfolio/relatorio</id><content type="html" xml:base="http://localhost:4000/portfolio/relatorio"><![CDATA[<p>Este Tutorial é indicado aos usuários de distros baseadas em <code class="language-plaintext highlighter-rouge">Debian</code>. Caso contrário, parte das configurações (talvez) não sejam validas, let’s bora.</p>
+
+<p>As distros baseadas em Debian possuem um limite de arquivos a serem abertos, definidos por padrão em no máximo 1024 arquivos simultâneos. Para que os testes em escala do <code class="language-plaintext highlighter-rouge">broker Mosquitto</code> sejam executáveis nestes sistemas, uma alteração no arquivo <em>system.conf</em> é fundamental.</p>
+
+<p>A rota utilizada para encontrar este arquivo é <em>/etc/systemd/system.conf</em>;</p>
+
+<p>Então, busque a váriavel DefaultLimitNOFILE que estará comentada, defina-a para o valor máximo de arquivos que você deseja abrir em simultâneo, neste exemplo 65535.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="no">DefaultLimitNOFILE</span> <span class="o">=</span> <span class="mi">65535</span></code></pre></figure>
+
+<p>Entretando, o <code class="language-plaintext highlighter-rouge">broker Mosquitto</code> possui um limite rígido de conexões, e em sua documentação, para ajustar este limite, deve-se abrir o arquivo <a href="https://mosquitto.org/man/mosquitto-conf-5.html">mosquitto.conf</a>, que se encontra em <em>/etc/mosquitto/mosquitto.conf</em> e incluir a variável max_connections;</p>
+
+<figure class="highlight"><pre><code class="language-scheme" data-lang="scheme"> <span class="nv">max_connections</span> <span class="mi">-1</span></code></pre></figure>
+
+<p>O valor -1 consiste em ilimitadas conexões.</p>
+
+<p>No manual do <a href="https://mosquitto.org/man/mosquitto-conf-5.html">mosquitto.conf</a> é aconselhado uma alteração no arquivo <em>limits.conf</em>, encontrado no diretório <em>/etc/security/limits.conf</em>. Logo, devemos inserir duas linhas que reforçam os limites rígidos e também de software do sistema, ambos definidos em 65535.</p>
+
+<figure class="highlight"><pre><code class="language-scheme" data-lang="scheme"><span class="o">#</span><span class="nv">&lt;domain&gt;</span>      <span class="nv">&lt;type&gt;</span>  <span class="nv">&lt;item&gt;</span>         <span class="nv">&lt;value&gt;</span>
+<span class="o">#</span>
+<span class="nv">*</span>               <span class="nv">hard</span>    <span class="nv">nofile</span>         <span class="mi">65535</span>
+<span class="nv">*</span>               <span class="nv">soft</span>    <span class="nv">nofile</span>         <span class="mi">65535</span>
+<span class="o">#</span> <span class="nv">End</span> <span class="nv">of</span> <span class="nv">file</span></code></pre></figure>
+
+<p>Enfim, para que as atualizações façam efeito, torna-se necessário reinicializar o <code class="language-plaintext highlighter-rouge">daemon</code> do sistema e também o <code class="language-plaintext highlighter-rouge">serviço Mosquitto</code>.</p>
+
+<p><br /></p>]]></content><author><name></name></author><category term="jekyll" /><category term="update" /><summary type="html"><![CDATA[Este Tutorial é indicado aos usuários de distros baseadas em Debian. Caso contrário, parte das configurações (talvez) não sejam validas, let’s bora.]]></summary></entry><entry><title type="html">Pesquisa acadêmica do protocolo MQTT</title><link href="http://localhost:4000/portfolio/pesquisa-mqtt" rel="alternate" type="text/html" title="Pesquisa acadêmica do protocolo MQTT" /><published>2022-04-20T20:24:06-03:00</published><updated>2022-04-20T20:24:06-03:00</updated><id>http://localhost:4000/portfolio/pesquisa-mqtt</id><content type="html" xml:base="http://localhost:4000/portfolio/pesquisa-mqtt"><![CDATA[<p>A Internet of Things (IoT) surgiu em 1999 através do Massachusetts Institute of Techno-
+logy (MIT) e foi conceituado para comunicação Machine to Machine (M2M), ou seja, máquinas
+se comunicando entre si (sensores, conexão de eletrônicos, controladores, etc) por meio de
+Bluetooth, Radio-Frequency Identification (RFID), Wireless Fidelity (WIFI) e/ou rede cabeada.
+Estes dispositivos se comunicam em cima de uma camada de rede, utilizando diversos protoco-
+los e servidores na nuvem que hospedam e disseminam as informações publicadas. Somando
+a quantidade de conexões suportadas e o baixo consumo de energia dos sensores, a rede IoT
+cresceu de uma maneira exponencial nos desenvolvimentos de projetos de mobilidade urbana,
+automação residencial e industrial.</p>
+<p>Segundo a Telecommunication Union (ITU) (12), a internet das coisas é “Uma infra-
+estrutura global para a sociedade da informação, permitindo serviços avançados através da
+interconexão (física e virtual) de coisas baseadas em tecnologias interoperáveis de informação
+e comunicação, existentes e em evolução ". Em uma análise estimativa, a IoT tem probabilidade
+de crescer com ganhos de 25 a 50 bilhões de dispositivos conectados até 2025. De acordo com
+Manyika (15), as principais áreas de potencial investimento são a saúde, agricultura e fabricantes
+que utilizam sensores para otimizar a manutenção de equipamentos e proteger a segurança dos
+trabalhadores. Em sua análise ascendente, é dimensionado um impacto econômico com poten-
+cial total de U$3,9 trilhões a U$11,1 trilhões por ano até 2025, o que seria aproximadamente
+11% da economia mundial.</p>
+<p>Para que haja a possibilidade de uma comunicação neste modelo, é necessário que exista
+uma arquitetura de rede que permita o envio e o recebimento de todas essas informações.
+Os pacotes de dados necessitam de identificação para serem entregues em seus destinos, essa
+comunicação é feita através de protocolos, como Transmission Control Protocol (TCP), User
+Datagram Protocol (UDP), entre outros. Silva (23) documenta, que tanto o TCP quanto o
+UDP funcionam em cima do Internet Protocol (IP), o IP é responsável pelo endereçamento das
+máquinas, garantindo que estas estejam identificadas na rede. Outros protocolos comumente
+visto em rede IoT, são: protocolo Message Queue Telemetry Transport (MQTT), aplicado em
+cima do TCP/IP, que utiliza de agentes mensageiros nomeados como publisher e subscriber,
+estes se comunicam mediante um broker atuante como um servidor; Constrained Application
+Protocol (CoAP), que é um protocolo de padrão Request For Comments (RFC), normalmente
+utilizado em aplicação de sensores vide sua simplicidade; Extensible Messaging and Presence
+Protocol (XMPP), um protocolo aberto baseado em Extensible Markup Language (XML), com
+padrão Internet Engineering Task Force (IETF), projetado para uso de aplicações de mensagens
+instantâneas em tempo real.</p>
+<p>Completando o cenário da comunicação M2M, na maioria dos casos é fundamental
+a existência de um gateway, onde atua como responsável pela distribuição dos pacotes de
+mensagens lançados por cada sensor, podendo também ser nomeado como um tradutor de
+protocolos nesta mediação. O gateway no IoT está agregado ao conceito de Fog Computing
+(Computação de borda ou computação em névoa), pois se encontra exatamente entre os sensores
+e a Cloud (nuvem) e permitem que mais coisas sejam introduzidas em operações de conexão
+em escala industrial, isto por suportarem diversos protocolos, ou serem implementados como
+multiprotocolos devido a aplicação em cenários difíceis da indústria 4.0 e cidades inteligentes.
+Entretanto, Silva (23) comenta em sua monografia, que existem desafios para o futuro
+da IoT nos próximos anos, como a regulamentação, padronização e segurança, isto por motivo
+de ter muitos protocolos implementados para rede IoT, onde cada protocolo tende a resolver
+somente um problema, se mantendo restrito quanto à utilização geral. Ele também fomenta,
+que a estimativa da inclusão do IoT em quase todos os dispositivos móveis ocorra em um
+curto espaço de tempo, sendo os dispositivos: medidores de estacionamento, pneus, estradas,
+monitores cardiovasculares, termostatos, sensores de presença, prateleiras de supermercados,
+assim dizendo, uma imensa quantia de dispositivos conectados com a internet das coisas, gerando
+uma propensa exploração das vulnerabilidade, problemas de privacidade com a disseminação
+dos dados sensíveis e segurança com possíveis cenários de ataques. Por estas circunstâncias
+são necessários regulamentos adequados, que evitem arriscar a segurança dos dispositivos e a
+validade da IoT do futuro.</p>
+<p>Enfim, a partir da análise do crescimento da internet das coisas, surge a proposta visando
+explorar alguns destes exemplos citados, em principal o protocolo MQTT. O cenário selecionado
+é definido por um dispositivo Raspberry Pi 4 como servidor/broker e um computador fazendo
+disparos de publicações e/ou assinaturas, para então explorar o gargalo do dispositivo, com
+intuito de analisar custos de processamento, o índice de utilização de memória, tráfego da rede
+e as taxas de envio/entrega das mensagens.</p>
+
+<p>Para ler os resultados desta pesquisa, acesse <a href="https://github.com/jardeleko/2022/tree/main/TCCII">TCCII</a> .</p>
+
+<p><br /></p>]]></content><author><name></name></author><category term="jekyll" /><category term="update" /><summary type="html"><![CDATA[A Internet of Things (IoT) surgiu em 1999 através do Massachusetts Institute of Techno- logy (MIT) e foi conceituado para comunicação Machine to Machine (M2M), ou seja, máquinas se comunicando entre si (sensores, conexão de eletrônicos, controladores, etc) por meio de Bluetooth, Radio-Frequency Identification (RFID), Wireless Fidelity (WIFI) e/ou rede cabeada. Estes dispositivos se comunicam em cima de uma camada de rede, utilizando diversos protoco- los e servidores na nuvem que hospedam e disseminam as informações publicadas. Somando a quantidade de conexões suportadas e o baixo consumo de energia dos sensores, a rede IoT cresceu de uma maneira exponencial nos desenvolvimentos de projetos de mobilidade urbana, automação residencial e industrial. Segundo a Telecommunication Union (ITU) (12), a internet das coisas é “Uma infra- estrutura global para a sociedade da informação, permitindo serviços avançados através da interconexão (física e virtual) de coisas baseadas em tecnologias interoperáveis de informação e comunicação, existentes e em evolução ". Em uma análise estimativa, a IoT tem probabilidade de crescer com ganhos de 25 a 50 bilhões de dispositivos conectados até 2025. De acordo com Manyika (15), as principais áreas de potencial investimento são a saúde, agricultura e fabricantes que utilizam sensores para otimizar a manutenção de equipamentos e proteger a segurança dos trabalhadores. Em sua análise ascendente, é dimensionado um impacto econômico com poten- cial total de U$3,9 trilhões a U$11,1 trilhões por ano até 2025, o que seria aproximadamente 11% da economia mundial. Para que haja a possibilidade de uma comunicação neste modelo, é necessário que exista uma arquitetura de rede que permita o envio e o recebimento de todas essas informações. Os pacotes de dados necessitam de identificação para serem entregues em seus destinos, essa comunicação é feita através de protocolos, como Transmission Control Protocol (TCP), User Datagram Protocol (UDP), entre outros. Silva (23) documenta, que tanto o TCP quanto o UDP funcionam em cima do Internet Protocol (IP), o IP é responsável pelo endereçamento das máquinas, garantindo que estas estejam identificadas na rede. Outros protocolos comumente visto em rede IoT, são: protocolo Message Queue Telemetry Transport (MQTT), aplicado em cima do TCP/IP, que utiliza de agentes mensageiros nomeados como publisher e subscriber, estes se comunicam mediante um broker atuante como um servidor; Constrained Application Protocol (CoAP), que é um protocolo de padrão Request For Comments (RFC), normalmente utilizado em aplicação de sensores vide sua simplicidade; Extensible Messaging and Presence Protocol (XMPP), um protocolo aberto baseado em Extensible Markup Language (XML), com padrão Internet Engineering Task Force (IETF), projetado para uso de aplicações de mensagens instantâneas em tempo real. Completando o cenário da comunicação M2M, na maioria dos casos é fundamental a existência de um gateway, onde atua como responsável pela distribuição dos pacotes de mensagens lançados por cada sensor, podendo também ser nomeado como um tradutor de protocolos nesta mediação. O gateway no IoT está agregado ao conceito de Fog Computing (Computação de borda ou computação em névoa), pois se encontra exatamente entre os sensores e a Cloud (nuvem) e permitem que mais coisas sejam introduzidas em operações de conexão em escala industrial, isto por suportarem diversos protocolos, ou serem implementados como multiprotocolos devido a aplicação em cenários difíceis da indústria 4.0 e cidades inteligentes. Entretanto, Silva (23) comenta em sua monografia, que existem desafios para o futuro da IoT nos próximos anos, como a regulamentação, padronização e segurança, isto por motivo de ter muitos protocolos implementados para rede IoT, onde cada protocolo tende a resolver somente um problema, se mantendo restrito quanto à utilização geral. Ele também fomenta, que a estimativa da inclusão do IoT em quase todos os dispositivos móveis ocorra em um curto espaço de tempo, sendo os dispositivos: medidores de estacionamento, pneus, estradas, monitores cardiovasculares, termostatos, sensores de presença, prateleiras de supermercados, assim dizendo, uma imensa quantia de dispositivos conectados com a internet das coisas, gerando uma propensa exploração das vulnerabilidade, problemas de privacidade com a disseminação dos dados sensíveis e segurança com possíveis cenários de ataques. Por estas circunstâncias são necessários regulamentos adequados, que evitem arriscar a segurança dos dispositivos e a validade da IoT do futuro. Enfim, a partir da análise do crescimento da internet das coisas, surge a proposta visando explorar alguns destes exemplos citados, em principal o protocolo MQTT. O cenário selecionado é definido por um dispositivo Raspberry Pi 4 como servidor/broker e um computador fazendo disparos de publicações e/ou assinaturas, para então explorar o gargalo do dispositivo, com intuito de analisar custos de processamento, o índice de utilização de memória, tráfego da rede e as taxas de envio/entrega das mensagens.]]></summary></entry><entry><title type="html">Sistemas Especialistas - IA</title><link href="http://localhost:4000/portfolio/sistemas-especialistas" rel="alternate" type="text/html" title="Sistemas Especialistas - IA" /><published>2021-12-08T13:57:00-03:00</published><updated>2021-12-08T13:57:00-03:00</updated><id>http://localhost:4000/portfolio/sistemas-especialistas</id><content type="html" xml:base="http://localhost:4000/portfolio/sistemas-especialistas"><![CDATA[<p>Projeto desenvolvido para o componente curricular de <code class="language-plaintext highlighter-rouge">Inteligência Artificial</code>, o intuito foi o desenvolvimento de um <code class="language-plaintext highlighter-rouge">sistema especialista</code> baseando-se nos modelos apresentados. Neste, fiz a escolha em elaborar um serviço no qual a máquina identifica o tipo de arte (visual e/ou digital) que o usuário tem mais interesse, foi implementado com a linguagem de programação Python.</p>
+
+<p>Durante a coleta dos dados, foi necessário construir um pequeno dataset identificando as relações hereditárias, listadas abaixo.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"> <span class="c1">#se  -   então</span>
+<span class="n">colorido</span><span class="o">-</span><span class="n">surrealista</span> 
+<span class="n">colorido</span><span class="o">-</span><span class="n">renascentista</span>
+<span class="n">colorido</span><span class="o">-</span><span class="n">minimalista</span>
+<span class="n">colorido</span><span class="o">-</span><span class="n">artdigital</span>
+<span class="n">pb</span><span class="o">-</span><span class="n">renascentista</span>
+<span class="n">pb</span><span class="o">-</span><span class="n">minimalista</span>
+<span class="n">pb</span><span class="o">-</span><span class="n">artdigital</span>
+<span class="n">pixel</span><span class="o">-</span><span class="n">artdigital</span>
+<span class="n">abstrato</span><span class="o">-</span><span class="n">surrealista</span>
+<span class="n">fotofig</span><span class="o">-</span><span class="n">renascentista</span>
+<span class="n">geometrico</span><span class="o">-</span><span class="n">minimalista</span></code></pre></figure>
+
+<p>Para construir a máquina foram criadas duas classes (<code class="language-plaintext highlighter-rouge">Pergunta e Identifica</code>) que posteriormente foram inclusas na função principal que executa o programa.</p>
+
+<p>A classe <code class="language-plaintext highlighter-rouge">Pergunta</code>, recolhe os valores (<code class="language-plaintext highlighter-rouge">S</code> ou <code class="language-plaintext highlighter-rouge">N</code>) que o usuário vai respondendo assim que o programa é executado, similar a um Quizz, onde cada pergunta possui uma resposta “correta” e que irá atribuir uma probabilidade em caso de acerto.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"> <span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="k">class</span> <span class="nc">Pergunta</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="p">.</span><span class="n">level</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[</span><span class="s">'Você gosta de pinturas coloridas?'</span><span class="p">,</span><span class="s">'colorido'</span><span class="p">],</span>
+    <span class="p">[</span><span class="s">'Te agrada figuras abstratas, coisas distorcidas?'</span><span class="p">,</span><span class="s">'abstrato'</span><span class="p">],</span>
+    <span class="p">[</span><span class="s">'Você gosta de pinturas em preto e branco?'</span><span class="p">,</span><span class="s">'pb'</span><span class="p">],</span>
+    <span class="p">[</span><span class="s">'Para voce a arte pode ser vista digitalmente?'</span><span class="p">,</span><span class="s">'pixel'</span><span class="p">],</span>
+    <span class="p">[</span><span class="s">'Poucos detalhes, simbolos, textos e desenhos?'</span><span class="p">,</span><span class="s">'geometrico'</span><span class="p">],</span>
+    <span class="p">[</span><span class="s">'Pinturas de pessoas(rostos, lugares)?'</span><span class="p">,</span><span class="s">'fotofig'</span><span class="p">],</span>		
+    <span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">texto</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">string</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">level</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">del</span> <span class="bp">self</span><span class="p">.</span><span class="n">level</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">string</span></code></pre></figure>
+
+<p>A classe abaixo (<code class="language-plaintext highlighter-rouge">Identifica</code>) é responsavel por pegar a resposta do usuário e fazer a identificação a partir da lista dos possíveis cenários do nosso set hereditário. Buscando a probabilidade e removendo os casos que não existem relações com a resposta.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"> <span class="k">class</span> <span class="nc">Identifica</span><span class="p">():</span>
+<span class="c1"># metodo construtor
+</span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="p">.</span><span class="n">resultado</span> <span class="o">=</span> <span class="p">[</span><span class="s">'surrealista'</span><span class="p">,</span> <span class="s">'renascentista'</span><span class="p">,</span> <span class="s">'minimalista'</span><span class="p">,</span> <span class="s">'artdigital'</span><span class="p">]</span>
+    <span class="bp">self</span><span class="p">.</span><span class="n">pessoa</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="bp">self</span><span class="p">.</span><span class="n">db</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="c1"># abre o arquivo db.txt em modo leitura e passa os dados para
+# uma lista de listas de str
+</span>    <span class="n">arquivo</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s">'db.txt'</span><span class="p">,</span><span class="s">'r'</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">linha</span> <span class="ow">in</span> <span class="n">arquivo</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">linha</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">linha</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">:</span>
+            <span class="n">linha</span> <span class="o">=</span> <span class="n">linha</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="s">""</span><span class="p">)</span>
+            <span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">db</span><span class="p">).</span><span class="n">append</span><span class="p">(</span><span class="n">linha</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="s">'-'</span><span class="p">))</span>
+    <span class="n">arquivo</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="c1"># imprime a quantidade de possibilidades cadastradas
+</span><span class="k">def</span> <span class="nf">tamanho</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">resultado</span><span class="p">))</span>
+
+<span class="c1"># imprime a probabilidade do diagnótico
+</span><span class="k">def</span> <span class="nf">probabilidade</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="nb">int</span><span class="p">((</span><span class="mi">1</span><span class="o">/</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">resultado</span><span class="p">)))</span><span class="o">*</span><span class="mi">100</span><span class="p">))</span>
+
+<span class="c1"># verifica se diagnóstico pensado tem a caracteristica passada por parametro
+</span><span class="k">def</span> <span class="nf">busca</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">familiar</span><span class="p">,</span> <span class="n">caract</span><span class="p">):</span>	
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">db</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">familiar</span> <span class="o">==</span> <span class="bp">self</span><span class="p">.</span><span class="n">db</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="bp">self</span><span class="p">.</span><span class="n">db</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">caract</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">return</span> <span class="bp">False</span>				
+
+<span class="c1"># remove os diagnósticos que não possuem o atributo passado por parametro
+</span><span class="k">def</span> <span class="nf">excluiquemnaoe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atributo</span><span class="p">):</span>
+    <span class="n">lista</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">resultado</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="p">.</span><span class="n">busca</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">resultado</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">atributo</span><span class="p">):</span>
+            <span class="n">lista</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">resultado</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="n">count</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">count</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">resultado</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="n">lista</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+	
+<span class="c1"># remove os cenários que possuem o atributo passado por parametro
+</span><span class="k">def</span> <span class="nf">excluiqueme</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atributo</span><span class="p">):</span>
+    <span class="n">lista</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">resultado</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">busca</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">resultado</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">atributo</span><span class="p">):</span>
+            <span class="n">lista</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">resultado</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="n">count</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">count</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">resultado</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="n">lista</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    
+<span class="k">def</span> <span class="nf">pergunta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">pergunta</span><span class="p">,</span> <span class="n">caract</span><span class="p">):</span>
+    <span class="n">resp</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="n">pergunta</span><span class="o">+</span><span class="s">': '</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">resp</span> <span class="o">==</span> <span class="s">'s'</span> <span class="ow">or</span> <span class="n">resp</span> <span class="o">==</span> <span class="s">'S'</span><span class="p">:</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">excluiquemnaoe</span><span class="p">(</span><span class="n">caract</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">resp</span> <span class="o">==</span> <span class="s">'n'</span> <span class="ow">or</span> <span class="n">resp</span> <span class="o">==</span> <span class="s">'N'</span><span class="p">:</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">excluiqueme</span><span class="p">(</span><span class="n">caract</span><span class="p">)</span></code></pre></figure>
+
+<p>Enfim, a <code class="language-plaintext highlighter-rouge">main</code> executa o programa até que a probabilidade da característica seja 100%, enquanto não for, o programa continua perguntando ao usuário, no fim, retorna o tipo de arte que a pessoa tem propensão e mostra alguns pintores daquela característica, selecionados por mim.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"> <span class="kn">from</span> <span class="nn">classId</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">classPerguntas</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="c1">#Inferência
+</span><span class="n">se</span> <span class="o">=</span> <span class="n">Identifica</span><span class="p">()</span>
+<span class="n">pergunta</span> <span class="o">=</span> <span class="n">Pergunta</span><span class="p">()</span>
+
+
+<span class="k">while</span> <span class="n">se</span><span class="p">.</span><span class="n">probabilidade</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">100</span><span class="p">:</span>
+	<span class="n">string</span> <span class="o">=</span> <span class="n">pergunta</span><span class="p">.</span><span class="n">texto</span><span class="p">()</span>
+	<span class="n">se</span><span class="p">.</span><span class="n">pergunta</span><span class="p">(</span><span class="n">string</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">string</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+	<span class="k">print</span><span class="p">(</span><span class="s">'probabilidade é %d'</span> <span class="o">%</span><span class="p">(</span><span class="n">se</span><span class="p">.</span><span class="n">probabilidade</span><span class="p">()))</span>
+	<span class="k">print</span><span class="p">(</span><span class="n">se</span><span class="p">.</span><span class="n">resultado</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">se</span><span class="p">.</span><span class="n">probabilidade</span><span class="p">()</span> <span class="o">==</span> <span class="mi">100</span><span class="p">:</span>
+		<span class="k">print</span><span class="p">(</span><span class="s">'Arte mais indicado para você é: '</span><span class="p">,</span><span class="n">se</span><span class="p">.</span><span class="n">resultado</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">se</span><span class="p">.</span><span class="n">resultado</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">'surrealista'</span><span class="p">):</span>
+			<span class="k">print</span><span class="p">(</span><span class="s">"Pintores relacionados:</span><span class="se">\n</span><span class="s"> Vicente Van Gogh </span><span class="se">\n</span><span class="s"> Salvador Dalí </span><span class="se">\n</span><span class="s"> Pablo Picasso </span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+		<span class="k">elif</span><span class="p">(</span><span class="n">se</span><span class="p">.</span><span class="n">resultado</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">'renascentista'</span><span class="p">):</span>
+			<span class="k">print</span><span class="p">(</span><span class="s">"Pintores relacionados:</span><span class="se">\n</span><span class="s"> Michelangelo </span><span class="se">\n</span><span class="s"> Leonardo da Vinci </span><span class="se">\n</span><span class="s"> Rafael </span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+		<span class="k">elif</span><span class="p">(</span><span class="n">se</span><span class="p">.</span><span class="n">resultado</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">'minimalista'</span><span class="p">):</span>
+			<span class="k">print</span><span class="p">(</span><span class="s">"Pintores relacionados:</span><span class="se">\n</span><span class="s"> Donald Judd </span><span class="se">\n</span><span class="s"> Yayoi kusama </span><span class="se">\n</span><span class="s"> Frank Stella </span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+		<span class="k">elif</span><span class="p">(</span><span class="n">se</span><span class="p">.</span><span class="n">resultado</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">'artdigital'</span><span class="p">):</span>
+			<span class="k">print</span><span class="p">(</span><span class="s">"Pintores relacionados:</span><span class="se">\n</span><span class="s"> Mike Winkelmann </span><span class="se">\n</span><span class="s"> Banksy </span><span class="se">\n</span><span class="s"> Giselle Beiguelman </span><span class="se">\n</span><span class="s">"</span><span class="p">)</span></code></pre></figure>
+
+<p>Link para acessar o conteúdo:<a href="https://github.com/jardeleko/Python/tree/master/Machine%20Learning/Sistemas%20Especialistas">especialista-IA</a>.</p>
+
+<p><br /></p>]]></content><author><name></name></author><category term="jekyll" /><category term="update" /><summary type="html"><![CDATA[Projeto desenvolvido para o componente curricular de Inteligência Artificial, o intuito foi o desenvolvimento de um sistema especialista baseando-se nos modelos apresentados. Neste, fiz a escolha em elaborar um serviço no qual a máquina identifica o tipo de arte (visual e/ou digital) que o usuário tem mais interesse, foi implementado com a linguagem de programação Python.]]></summary></entry><entry><title type="html">Projeto Web Flow Filmes</title><link href="http://localhost:4000/portfolio/flow.md" rel="alternate" type="text/html" title="Projeto Web Flow Filmes" /><published>2021-05-17T13:57:00-03:00</published><updated>2021-05-17T13:57:00-03:00</updated><id>http://localhost:4000/portfolio/flow.md</id><content type="html" xml:base="http://localhost:4000/portfolio/flow.md"><![CDATA[<p>O projeto consistiu em implementar uma platforma digital que ajudasse na tomada de decisões, na qual o usuário entrava e verifica os filmes das plataformas: <code class="language-plaintext highlighter-rouge">Amazon Prime Video, Globo Play e Netflix</code>, cada filme lançado garantia comentários e avaliações dos usuários, similar a uma rede social, que permitisse buscas relacionadas ao interesse de cada um, e assim, havendo uma colaboração entre os usuários que buscassem indicações no site Flow.</p>
+
+<p>O <code class="language-plaintext highlighter-rouge">Flow Filmes</code> foi um dos projetos web que criei utilizando <code class="language-plaintext highlighter-rouge">javascript</code> em quase todo processo de desenvolvimento (82%), sendo: <code class="language-plaintext highlighter-rouge">Nodejs</code> no back-end e <code class="language-plaintext highlighter-rouge">ejs</code> no front-end.</p>
+
+<p>Em razão de ter arquivos extensos, estarei trazendo apenas as etapas de construção que deram uma certa identidade ao projeto e algumas imagens dos <code class="language-plaintext highlighter-rouge">templates</code> finalizados. As etapas seriam: criação do banco de dados utilizando do ORM <code class="language-plaintext highlighter-rouge">Sequelize</code> servindo o <code class="language-plaintext highlighter-rouge">Postgres</code> e a criação de um layout com a opção de o usuário classificar/comentar os filmes que já assistiu.</p>
+
+<p>Para criar a conexão utilizando o <code class="language-plaintext highlighter-rouge">Sequelize</code>, basta incluir o pacote em uma variável e gerar a conexão da seguinte maneira:</p>
+
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">const</span> <span class="nx">Sequelize</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">sequelize</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">sequelize</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Sequelize</span><span class="p">(</span><span class="dl">'</span><span class="s1">flow</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">gnomo</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">123123</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">host</span><span class="p">:</span> <span class="dl">'</span><span class="s1">127.0.0.1</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">dialect</span><span class="p">:</span> <span class="dl">'</span><span class="s1">postgres</span><span class="dl">'</span>
+<span class="p">})</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">Sequelize</span><span class="p">:</span> <span class="nx">Sequelize</span><span class="p">,</span>
+    <span class="na">sequelize</span><span class="p">:</span> <span class="nx">sequelize</span>
+<span class="p">};</span>
+
+<span class="nx">sequelize</span><span class="p">.</span><span class="nx">authenticate</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">conectado com sucesso!</span><span class="dl">"</span><span class="p">)</span>
+<span class="p">}).</span><span class="k">catch</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">erro</span><span class="p">){</span>
+    <span class="nx">catchonsole</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">Falha ao se conectar! </span><span class="dl">"</span> <span class="o">+</span> <span class="nx">erro</span><span class="p">)</span>
+<span class="p">})</span> </code></pre></figure>
+
+<p>o <code class="language-plaintext highlighter-rouge">module.exports</code>, permite a reutilização das variáveis para dar sequência na construção das tabelas e dos relacionamentos no banco de dados (inclusão em arquivos externos).</p>
+
+<p>No meu arquivo principal (<code class="language-plaintext highlighter-rouge">index.js</code>), levantei o front utilizando o <code class="language-plaintext highlighter-rouge">Express</code> e importei todas as rotas e pastas que faziam parte do projeto, também setei a view engine <code class="language-plaintext highlighter-rouge">ejs</code>, como mostra o trecho abaixo.</p>
+
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">const</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">express</span><span class="dl">'</span><span class="p">)</span>
+<span class="kd">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">express</span><span class="p">()</span>
+<span class="kd">const</span> <span class="nx">route</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">./routes/route</span><span class="dl">'</span><span class="p">)</span>
+<span class="kd">const</span> <span class="nx">PORT</span> <span class="o">=</span> <span class="mi">5000</span>
+<span class="kd">const</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span> <span class="p">(</span><span class="dl">'</span><span class="s1">path</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">route</span><span class="p">);</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">express</span><span class="p">.</span><span class="kd">static</span><span class="p">(</span><span class="dl">'</span><span class="s1">public</span><span class="dl">'</span><span class="p">))</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="dl">'</span><span class="s1">/css</span><span class="dl">'</span><span class="p">,</span> <span class="nx">express</span><span class="p">.</span><span class="kd">static</span><span class="p">(</span><span class="nx">__dirname</span> <span class="o">+</span> <span class="dl">'</span><span class="s1">public/css</span><span class="dl">'</span><span class="p">))</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="dl">'</span><span class="s1">/img</span><span class="dl">'</span><span class="p">,</span> <span class="nx">express</span><span class="p">.</span><span class="kd">static</span><span class="p">(</span><span class="nx">__dirname</span> <span class="o">+</span> <span class="dl">'</span><span class="s1">public/img</span><span class="dl">'</span><span class="p">))</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="dl">'</span><span class="s1">/uploads</span><span class="dl">'</span><span class="p">,</span> <span class="nx">express</span><span class="p">.</span><span class="kd">static</span><span class="p">(</span><span class="nx">__dirname</span> <span class="o">+</span> <span class="dl">'</span><span class="s1">public/uploads</span><span class="dl">'</span><span class="p">))</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="dl">'</span><span class="s1">/js</span><span class="dl">'</span><span class="p">,</span> <span class="nx">express</span><span class="p">.</span><span class="kd">static</span><span class="p">(</span><span class="nx">__dirname</span> <span class="o">+</span> <span class="dl">'</span><span class="s1">public/js</span><span class="dl">'</span><span class="p">))</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="kd">set</span><span class="p">(</span><span class="dl">'</span><span class="s1">views</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">./views</span><span class="dl">'</span><span class="p">)</span>
+<span class="nx">app</span><span class="p">.</span><span class="kd">set</span><span class="p">(</span><span class="dl">'</span><span class="s1">view engine</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">ejs</span><span class="dl">'</span><span class="p">)</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="nx">PORT</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">rodando na port http://localhost:5000</span><span class="dl">'</span><span class="p">)</span>
+<span class="p">})</span></code></pre></figure>
+
+<p>Para construção do serviço de avaliação do site, foi utilizado a framework <code class="language-plaintext highlighter-rouge">average-rating</code> para implementar um <code class="language-plaintext highlighter-rouge">star rating</code>, cálculando a média relativa e considerando valores de 0-5 estrelas para o total de votos, abaixo a função no back-end implementando os valores que chegam dos formulários.</p>
+
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">const</span> <span class="p">{</span>	<span class="nx">score</span><span class="p">,</span> <span class="nx">rate</span><span class="p">,</span> <span class="nx">average</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">average-rating</span><span class="dl">'</span><span class="p">);</span>
+<span class="nx">router</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="dl">'</span><span class="s1">/commits/:id</span><span class="dl">'</span><span class="p">,</span> <span class="nx">checkAuthentication</span><span class="p">,</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+	<span class="kd">var</span> <span class="nx">idfilm</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+	<span class="kd">let</span> <span class="nx">aux</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+	<span class="kd">var</span> <span class="nx">erros_commit</span> <span class="o">=</span> <span class="p">[];</span>
+	<span class="k">if</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">rate1</span><span class="p">)</span> <span class="nx">aux</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">rate1</span>
+	<span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">rate2</span><span class="p">)</span> <span class="nx">aux</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">rate2</span>
+	<span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">rate3</span><span class="p">)</span> <span class="nx">aux</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">rate3</span>
+	<span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">rate4</span><span class="p">)</span> <span class="nx">aux</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">rate4</span>
+	<span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">rate5</span><span class="p">)</span> <span class="nx">aux</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">rate5</span>
+	<span class="k">else</span> <span class="nx">aux</span> <span class="o">=</span> <span class="mi">0</span></code></pre></figure>
+
+<p>E também a função que atualiza os valores agora para mostrar aos demais usuários:</p>
+
+<figure class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">router</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="dl">'</span><span class="s1">/filefilter/:id</span><span class="dl">'</span><span class="p">,</span><span class="nx">checkAuthentication</span><span class="p">,</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+	<span class="kd">var</span> <span class="nx">idteste</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span>
+	<span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">user</span>
+	<span class="kd">let</span> <span class="nx">len</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="kd">let</span> <span class="nx">a</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="kd">let</span> <span class="nx">b</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="kd">let</span> <span class="nx">c</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="kd">let</span> <span class="nx">d</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="kd">let</span> <span class="nx">e</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="nx">Avaliacao</span><span class="p">.</span><span class="nx">findAll</span><span class="p">({</span><span class="na">where</span><span class="p">:</span> <span class="p">{</span><span class="dl">'</span><span class="s1">idFilm</span><span class="dl">'</span><span class="p">:</span> <span class="nx">idteste</span><span class="p">}}).</span><span class="nx">then</span><span class="p">((</span><span class="nx">result</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+		<span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">index</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">index</span> <span class="o">&lt;</span> <span class="nx">result</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">index</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">if</span><span class="p">(</span><span class="nx">result</span><span class="p">[</span><span class="nx">index</span><span class="p">].</span><span class="nx">nota</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="nx">a</span><span class="o">++</span><span class="p">;</span>
+			<span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">result</span><span class="p">[</span><span class="nx">index</span><span class="p">].</span><span class="nx">nota</span> <span class="o">===</span> <span class="mi">2</span><span class="p">)</span> <span class="nx">b</span><span class="o">++</span><span class="p">;</span>
+			<span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">result</span><span class="p">[</span><span class="nx">index</span><span class="p">].</span><span class="nx">nota</span> <span class="o">===</span> <span class="mi">3</span><span class="p">)</span> <span class="nx">c</span><span class="o">++</span><span class="p">;</span>
+			<span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">result</span><span class="p">[</span><span class="nx">index</span><span class="p">].</span><span class="nx">nota</span> <span class="o">===</span> <span class="mi">4</span><span class="p">)</span> <span class="nx">d</span><span class="o">++</span><span class="p">;</span>
+			<span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">result</span><span class="p">[</span><span class="nx">index</span><span class="p">].</span><span class="nx">nota</span> <span class="o">===</span> <span class="mi">5</span><span class="p">)</span> <span class="nx">e</span><span class="o">++</span><span class="p">;</span>
+			<span class="nx">len</span><span class="o">++</span><span class="p">;</span>
+		<span class="p">}</span>
+		<span class="kd">const</span> <span class="nx">rating</span> <span class="o">=</span> <span class="p">[</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">e</span><span class="p">];</span>
+		<span class="kd">var</span> <span class="nx">total</span> <span class="o">=</span> <span class="nx">average</span><span class="p">(</span><span class="nx">rating</span><span class="p">);</span> <span class="c1">// --&gt; 4.4</span></code></pre></figure>
+
+<p>Também foi incluído o formulário em <code class="language-plaintext highlighter-rouge">ejs</code> para gerar uma interface amigável ao usuário final, em razão do html gerar conflito com o <code class="language-plaintext highlighter-rouge">markdown</code> do <code class="language-plaintext highlighter-rouge">jekyll</code> (ferramenta que estou utilizando para escrever o portfólio), estarei apenas trazendo imagens que incluem o layout final da caixa de avaliação.</p>
+
+<p>Bueno, alguns templates finais ficaram assim..</p>
+
+<ul>
+  <li>Página para novos clientes</li>
+</ul>
+
+<p><img src="https://raw.githubusercontent.com/jardeleko/flow/main/printscreen/create.png?token=GHSAT0AAAAAABT2BNMSUGVOX2HXPV6V4Y3UYTE34OQ" style="float:right" /></p>
+
+<ul>
+  <li>Página para logar no flow</li>
+</ul>
+
+<p><img src="https://raw.githubusercontent.com/jardeleko/flow/main/printscreen/login.png?token=GHSAT0AAAAAABT2BNMT56ZJMKUUNUCH535KYTE37XA" style="float:right" /></p>
+
+<ul>
+  <li>Página inicial do site</li>
+</ul>
+
+<p><img src="https://raw.githubusercontent.com/jardeleko/flow/main/printscreen/main.png" /></p>
+
+<ul>
+  <li>caixa de avaliações e comentários</li>
+</ul>
+
+<p><img src="https://raw.githubusercontent.com/jardeleko/flow/main/printscreen/page.png" /></p>
+
+<p>Enfim, embora ter sido um projeto simples em Nodejs, este foi um dos mais agradáveis de estar desenvolvendo.</p>
+
+<p>Outros arquivos deste site estão no meu repositório, acesse no link: <a href="https://github.com/jardeleko/flow">flow filmes</a></p>]]></content><author><name></name></author><category term="jekyll" /><category term="update" /><summary type="html"><![CDATA[O projeto consistiu em implementar uma platforma digital que ajudasse na tomada de decisões, na qual o usuário entrava e verifica os filmes das plataformas: Amazon Prime Video, Globo Play e Netflix, cada filme lançado garantia comentários e avaliações dos usuários, similar a uma rede social, que permitisse buscas relacionadas ao interesse de cada um, e assim, havendo uma colaboração entre os usuários que buscassem indicações no site Flow.]]></summary></entry><entry><title type="html">Métricas do clima com Arduino UNO</title><link href="http://localhost:4000/portfolio/arduino-temperature" rel="alternate" type="text/html" title="Métricas do clima com Arduino UNO" /><published>2019-11-28T13:57:00-03:00</published><updated>2019-11-28T13:57:00-03:00</updated><id>http://localhost:4000/portfolio/arduino-temperature</id><content type="html" xml:base="http://localhost:4000/portfolio/arduino-temperature"><![CDATA[<p>Como esse portfólio foi criado prioritáriamente para lançar alguns projetos que eu gosto, não poderia deixar de selecionar um projetinho embarcado, envolvendo <code class="language-plaintext highlighter-rouge">Arduino Uno</code> e uma plaquinha <code class="language-plaintext highlighter-rouge">BME280</code>.</p>
+
+<p>Mas antes, vou tentar explicar as razões de ter implementado esse serviço, vamos lá.</p>
+
+<p>A ideia começou na disciplina de <code class="language-plaintext highlighter-rouge">Iniciação à Prática Científica</code> (IPC) e consistia em temporizar a irrigação de uma lavoura, inclusive, esse serviço já existe a algum tempo, mas fuçar nisso foi gratificante. Enfim, para que fosse possível, uma das etapas do projeto foi a coleta da temperatura/pressão/umidade, até porque, se houvesse umidade suficiente, não seria necessário o pivo, gotejamento ou qualquer outro método de irrigação ser ativado. Após essa coleta, um <code class="language-plaintext highlighter-rouge">protocolo</code> de minha preferência enviaria os dados coletados até um <code class="language-plaintext highlighter-rouge">servidor na nuvem</code>.</p>
+
+<p>No <code class="language-plaintext highlighter-rouge">Arduino</code>, os fios/junpers foram conectados na seguinte ordem:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Arduino UNO</th>
+      <th>BME 280</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>5V</td>
+      <td>VIN</td>
+    </tr>
+    <tr>
+      <td>GND</td>
+      <td>GND</td>
+    </tr>
+    <tr>
+      <td>SCL</td>
+      <td>SCL</td>
+    </tr>
+    <tr>
+      <td>SDA</td>
+      <td>SDA</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Em seguida, bastava subir o código no UNO, ou assim dizendo, montar a sketch.</p>
+
+<p>Foi implementado um delay de 1000ms, ou seja, intevalos de  um em um segundo, até porque o dispositivo ia ficar operando direto, vide o Arduino consumir pouquíssima energia, o código abaixo apresenta as linhas que determinaram essas funções.</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="cp">#include</span> <span class="cpf">&lt;Wire.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;Adafruit_Sensor.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;Adafruit_BME280.h&gt;</span><span class="cp">
+</span>
+<span class="cp">#define SEALEVELPRESSURE_HPA (1013.25)
+</span>
+<span class="n">Adafruit_BME280</span> <span class="n">bme</span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="nf">setup</span><span class="p">()</span> <span class="p">{</span>
+	<span class="n">Serial</span><span class="p">.</span><span class="n">begin</span><span class="p">(</span><span class="mi">9600</span><span class="p">);</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">bme</span><span class="p">.</span><span class="n">begin</span><span class="p">(</span><span class="mh">0x76</span><span class="p">))</span> <span class="p">{</span>
+		<span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">"Could not find a valid BME280 sensor, check wiring!"</span><span class="p">);</span>
+		<span class="k">while</span> <span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">loop</span><span class="p">()</span> <span class="p">{</span>
+	<span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="s">"Temperature = "</span><span class="p">);</span>
+	<span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="n">bme</span><span class="p">.</span><span class="n">readTemperature</span><span class="p">());</span>
+	<span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">"*C"</span><span class="p">);</span>
+
+	<span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="s">"Pressure = "</span><span class="p">);</span>
+	<span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="n">bme</span><span class="p">.</span><span class="n">readPressure</span><span class="p">()</span> <span class="o">/</span> <span class="mf">100.0</span><span class="n">F</span><span class="p">);</span>
+	<span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">"hPa"</span><span class="p">);</span>
+
+	<span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="s">"Approx. Altitude = "</span><span class="p">);</span>
+	<span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="n">bme</span><span class="p">.</span><span class="n">readAltitude</span><span class="p">(</span><span class="n">SEALEVELPRESSURE_HPA</span><span class="p">));</span>
+	<span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">"m"</span><span class="p">);</span>
+
+	<span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="s">"Humidity = "</span><span class="p">);</span>
+	<span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="n">bme</span><span class="p">.</span><span class="n">readHumidity</span><span class="p">());</span>
+	<span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">"%"</span><span class="p">);</span>
+
+	<span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">();</span>
+	<span class="n">delay</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>As imagens abaixa ilustram como ficou as plaquinas após a conexão dos fios.</p>
+
+<p><img src="https://raw.githubusercontent.com/jardeleko/Arduino/master/termostato/test/plac_.jpeg?token=GHSAT0AAAAAABT2BNMSRXYQIKWCB74SBYXIYTEWAWQ" width="350" height="300" style="float:left" /></p>
+
+<p><img src="https://raw.githubusercontent.com/jardeleko/Arduino/master/termostato/test/protoboard.jpeg?token=GHSAT0AAAAAABT2BNMT7XK66PO2AMMKCQPOYTEWBAQ" width="400" style="float:right" /></p>
+
+<p>E os dados encontrados durante os testes foram estes:</p>
+<center>
+<img src="https://raw.githubusercontent.com/jardeleko/Arduino/master/termostato/test/1.png?token=GHSAT0AAAAAABT2BNMTLXNDTAUW6OQV5QCAYTEWAEQ" />
+</center>
+<p>Enfim, também foi utilizado o Google Cloud Platform para testar os envios e entregas dos dados, porém a pesquisa não foi finalizada, isso pela falta do próprio acesso a sistemas de irrigação complexos.</p>]]></content><author><name></name></author><category term="jekyll" /><category term="update" /><summary type="html"><![CDATA[Como esse portfólio foi criado prioritáriamente para lançar alguns projetos que eu gosto, não poderia deixar de selecionar um projetinho embarcado, envolvendo Arduino Uno e uma plaquinha BME280.]]></summary></entry></feed>

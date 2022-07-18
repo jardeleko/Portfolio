@@ -1,0 +1,89 @@
+I"�<p>Como esse portfólio foi criado prioritáriamente para lançar alguns projetos que eu gosto, não poderia deixar de selecionar um projetinho embarcado, envolvendo <code class="language-plaintext highlighter-rouge">Arduino Uno</code> e uma plaquinha <code class="language-plaintext highlighter-rouge">BME280</code>.</p>
+
+<p>Mas antes, vou tentar explicar as razões de ter implementado esse serviço, vamos lá.</p>
+
+<p>A ideia começou na disciplina de <code class="language-plaintext highlighter-rouge">Iniciação à Prática Científica</code> (IPC) e consistia em temporizar a irrigação de uma lavoura, inclusive, esse serviço já existe a algum tempo, mas fuçar nisso foi gratificante. Enfim, para que fosse possível, uma das etapas do projeto foi a coleta da temperatura/pressão/umidade, até porque, se houvesse umidade suficiente, não seria necessário o pivo, gotejamento ou qualquer outro método de irrigação ser ativado. Após essa coleta, um <code class="language-plaintext highlighter-rouge">protocolo</code> de minha preferência enviaria os dados coletados até um <code class="language-plaintext highlighter-rouge">servidor na nuvem</code>.</p>
+
+<p>No <code class="language-plaintext highlighter-rouge">Arduino</code>, os fios/junpers foram conectados na seguinte ordem:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Arduino UNO</th>
+      <th>BME 280</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>5V</td>
+      <td>VIN</td>
+    </tr>
+    <tr>
+      <td>GND</td>
+      <td>GND</td>
+    </tr>
+    <tr>
+      <td>SCL</td>
+      <td>SCL</td>
+    </tr>
+    <tr>
+      <td>SDA</td>
+      <td>SDA</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Em seguida, bastava subir o código no UNO, ou assim dizendo, montar a sketch.</p>
+
+<p>Foi implementado um delay de 1000ms, ou seja, intevalos de  um em um segundo, até porque o dispositivo ia ficar operando direto, vide o Arduino consumir pouquíssima energia, o código abaixo apresenta as linhas que determinaram essas funções.</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="cp">#include</span> <span class="cpf">&lt;Wire.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;Adafruit_Sensor.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;Adafruit_BME280.h&gt;</span><span class="cp">
+</span>
+<span class="cp">#define SEALEVELPRESSURE_HPA (1013.25)
+</span>
+<span class="n">Adafruit_BME280</span> <span class="n">bme</span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="nf">setup</span><span class="p">()</span> <span class="p">{</span>
+	<span class="n">Serial</span><span class="p">.</span><span class="n">begin</span><span class="p">(</span><span class="mi">9600</span><span class="p">);</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">bme</span><span class="p">.</span><span class="n">begin</span><span class="p">(</span><span class="mh">0x76</span><span class="p">))</span> <span class="p">{</span>
+		<span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">"Could not find a valid BME280 sensor, check wiring!"</span><span class="p">);</span>
+		<span class="k">while</span> <span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">loop</span><span class="p">()</span> <span class="p">{</span>
+	<span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="s">"Temperature = "</span><span class="p">);</span>
+	<span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="n">bme</span><span class="p">.</span><span class="n">readTemperature</span><span class="p">());</span>
+	<span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">"*C"</span><span class="p">);</span>
+
+	<span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="s">"Pressure = "</span><span class="p">);</span>
+	<span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="n">bme</span><span class="p">.</span><span class="n">readPressure</span><span class="p">()</span> <span class="o">/</span> <span class="mf">100.0</span><span class="n">F</span><span class="p">);</span>
+	<span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">"hPa"</span><span class="p">);</span>
+
+	<span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="s">"Approx. Altitude = "</span><span class="p">);</span>
+	<span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="n">bme</span><span class="p">.</span><span class="n">readAltitude</span><span class="p">(</span><span class="n">SEALEVELPRESSURE_HPA</span><span class="p">));</span>
+	<span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">"m"</span><span class="p">);</span>
+
+	<span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="s">"Humidity = "</span><span class="p">);</span>
+	<span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="n">bme</span><span class="p">.</span><span class="n">readHumidity</span><span class="p">());</span>
+	<span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">"%"</span><span class="p">);</span>
+
+	<span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">();</span>
+	<span class="n">delay</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>As imagens abaixa ilustram como ficou as plaquinas após a conexão dos fios.</p>
+
+<p><img src="https://raw.githubusercontent.com/jardeleko/Arduino/master/termostato/test/plac_.jpeg?token=GHSAT0AAAAAABT2BNMSRXYQIKWCB74SBYXIYTEWAWQ" width="350" height="300" style="float:left" /></p>
+
+<p><img src="https://raw.githubusercontent.com/jardeleko/Arduino/master/termostato/test/protoboard.jpeg?token=GHSAT0AAAAAABT2BNMT7XK66PO2AMMKCQPOYTEWBAQ" width="400" style="float:right" /></p>
+
+<p>E os dados encontrados durante os testes foram estes:</p>
+<center>
+<img src="https://raw.githubusercontent.com/jardeleko/Arduino/master/termostato/test/1.png?token=GHSAT0AAAAAABT2BNMTLXNDTAUW6OQV5QCAYTEWAEQ" />
+</center>
+<p>Enfim, também foi utilizado o Google Cloud Platform para testar os envios e entregas dos dados, porém a pesquisa não foi finalizada, isso pela falta do próprio acesso a sistemas de irrigação complexos.</p>
+:ET

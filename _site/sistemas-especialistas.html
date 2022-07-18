@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/portfolio/assets/main.css">
+    <link rel="icon" href=/portfolio/assets/sbg.jpg style="border-radius: 40%;">
+    <title>Jardel Osorio Duarte</title>
+  </head><body>
+    <div class="container"><header class="masthead">
+  <h1 class="masthead-title">
+    <a href="/portfolio/">Jardel Osorio Duarte<span style="font-size:20px; color: rgb(100, 100, 100);"> Portfólio</span></a>
+  </h1>  
+  <nav class="masthead-nav">
+    
+      <a href="/portfolio/404.html"></a>
+    
+      <a href="/portfolio/about/">Biografia</a>
+    
+      <a href="/portfolio/curriculum">Currículo Lattes</a>
+    
+      <a href="/portfolio/"></a>
+    
+      <a href="/portfolio/tools">Ferramentas</a>
+    
+      <a href="/portfolio/assets/main.css"></a>
+    
+      <a href="/portfolio/feed.xml"></a>
+    
+  </nav>
+</header><article class="content post">
+  <h1 class="post-title">Sistemas Especialistas - IA</h1>
+  <div class="post-date">
+    <time>08 Dec 2021</time>
+  </div>
+  <p>Projeto desenvolvido para o componente curricular de <code class="language-plaintext highlighter-rouge">Inteligência Artificial</code>, o intuito foi o desenvolvimento de um <code class="language-plaintext highlighter-rouge">sistema especialista</code> baseando-se nos modelos apresentados. Neste, fiz a escolha em elaborar um serviço no qual a máquina identifica o tipo de arte (visual e/ou digital) que o usuário tem mais interesse, foi implementado com a linguagem de programação Python.</p>
+
+<p>Durante a coleta dos dados, foi necessário construir um pequeno dataset identificando as relações hereditárias, listadas abaixo.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"> <span class="c1">#se  -   então</span>
+<span class="n">colorido</span><span class="o">-</span><span class="n">surrealista</span> 
+<span class="n">colorido</span><span class="o">-</span><span class="n">renascentista</span>
+<span class="n">colorido</span><span class="o">-</span><span class="n">minimalista</span>
+<span class="n">colorido</span><span class="o">-</span><span class="n">artdigital</span>
+<span class="n">pb</span><span class="o">-</span><span class="n">renascentista</span>
+<span class="n">pb</span><span class="o">-</span><span class="n">minimalista</span>
+<span class="n">pb</span><span class="o">-</span><span class="n">artdigital</span>
+<span class="n">pixel</span><span class="o">-</span><span class="n">artdigital</span>
+<span class="n">abstrato</span><span class="o">-</span><span class="n">surrealista</span>
+<span class="n">fotofig</span><span class="o">-</span><span class="n">renascentista</span>
+<span class="n">geometrico</span><span class="o">-</span><span class="n">minimalista</span></code></pre></figure>
+
+<p>Para construir a máquina foram criadas duas classes (<code class="language-plaintext highlighter-rouge">Pergunta e Identifica</code>) que posteriormente foram inclusas na função principal que executa o programa.</p>
+
+<p>A classe <code class="language-plaintext highlighter-rouge">Pergunta</code>, recolhe os valores (<code class="language-plaintext highlighter-rouge">S</code> ou <code class="language-plaintext highlighter-rouge">N</code>) que o usuário vai respondendo assim que o programa é executado, similar a um Quizz, onde cada pergunta possui uma resposta “correta” e que irá atribuir uma probabilidade em caso de acerto.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"> <span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="k">class</span> <span class="nc">Pergunta</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="p">.</span><span class="n">level</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[</span><span class="s">'Você gosta de pinturas coloridas?'</span><span class="p">,</span><span class="s">'colorido'</span><span class="p">],</span>
+    <span class="p">[</span><span class="s">'Te agrada figuras abstratas, coisas distorcidas?'</span><span class="p">,</span><span class="s">'abstrato'</span><span class="p">],</span>
+    <span class="p">[</span><span class="s">'Você gosta de pinturas em preto e branco?'</span><span class="p">,</span><span class="s">'pb'</span><span class="p">],</span>
+    <span class="p">[</span><span class="s">'Para voce a arte pode ser vista digitalmente?'</span><span class="p">,</span><span class="s">'pixel'</span><span class="p">],</span>
+    <span class="p">[</span><span class="s">'Poucos detalhes, simbolos, textos e desenhos?'</span><span class="p">,</span><span class="s">'geometrico'</span><span class="p">],</span>
+    <span class="p">[</span><span class="s">'Pinturas de pessoas(rostos, lugares)?'</span><span class="p">,</span><span class="s">'fotofig'</span><span class="p">],</span>		
+    <span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">texto</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">string</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">level</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">del</span> <span class="bp">self</span><span class="p">.</span><span class="n">level</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">string</span></code></pre></figure>
+
+<p>A classe abaixo (<code class="language-plaintext highlighter-rouge">Identifica</code>) é responsavel por pegar a resposta do usuário e fazer a identificação a partir da lista dos possíveis cenários do nosso set hereditário. Buscando a probabilidade e removendo os casos que não existem relações com a resposta.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"> <span class="k">class</span> <span class="nc">Identifica</span><span class="p">():</span>
+<span class="c1"># metodo construtor
+</span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="p">.</span><span class="n">resultado</span> <span class="o">=</span> <span class="p">[</span><span class="s">'surrealista'</span><span class="p">,</span> <span class="s">'renascentista'</span><span class="p">,</span> <span class="s">'minimalista'</span><span class="p">,</span> <span class="s">'artdigital'</span><span class="p">]</span>
+    <span class="bp">self</span><span class="p">.</span><span class="n">pessoa</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="bp">self</span><span class="p">.</span><span class="n">db</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="c1"># abre o arquivo db.txt em modo leitura e passa os dados para
+# uma lista de listas de str
+</span>    <span class="n">arquivo</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s">'db.txt'</span><span class="p">,</span><span class="s">'r'</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">linha</span> <span class="ow">in</span> <span class="n">arquivo</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">linha</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">linha</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">:</span>
+            <span class="n">linha</span> <span class="o">=</span> <span class="n">linha</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="s">""</span><span class="p">)</span>
+            <span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">db</span><span class="p">).</span><span class="n">append</span><span class="p">(</span><span class="n">linha</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="s">'-'</span><span class="p">))</span>
+    <span class="n">arquivo</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="c1"># imprime a quantidade de possibilidades cadastradas
+</span><span class="k">def</span> <span class="nf">tamanho</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">resultado</span><span class="p">))</span>
+
+<span class="c1"># imprime a probabilidade do diagnótico
+</span><span class="k">def</span> <span class="nf">probabilidade</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="nb">int</span><span class="p">((</span><span class="mi">1</span><span class="o">/</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">resultado</span><span class="p">)))</span><span class="o">*</span><span class="mi">100</span><span class="p">))</span>
+
+<span class="c1"># verifica se diagnóstico pensado tem a caracteristica passada por parametro
+</span><span class="k">def</span> <span class="nf">busca</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">familiar</span><span class="p">,</span> <span class="n">caract</span><span class="p">):</span>	
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">db</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">familiar</span> <span class="o">==</span> <span class="bp">self</span><span class="p">.</span><span class="n">db</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="bp">self</span><span class="p">.</span><span class="n">db</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">caract</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">return</span> <span class="bp">False</span>				
+
+<span class="c1"># remove os diagnósticos que não possuem o atributo passado por parametro
+</span><span class="k">def</span> <span class="nf">excluiquemnaoe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atributo</span><span class="p">):</span>
+    <span class="n">lista</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">resultado</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="p">.</span><span class="n">busca</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">resultado</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">atributo</span><span class="p">):</span>
+            <span class="n">lista</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">resultado</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="n">count</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">count</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">resultado</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="n">lista</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+	
+<span class="c1"># remove os cenários que possuem o atributo passado por parametro
+</span><span class="k">def</span> <span class="nf">excluiqueme</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atributo</span><span class="p">):</span>
+    <span class="n">lista</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">resultado</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">busca</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">resultado</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">atributo</span><span class="p">):</span>
+            <span class="n">lista</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">resultado</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="n">count</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">count</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">resultado</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="n">lista</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    
+<span class="k">def</span> <span class="nf">pergunta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">pergunta</span><span class="p">,</span> <span class="n">caract</span><span class="p">):</span>
+    <span class="n">resp</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="n">pergunta</span><span class="o">+</span><span class="s">': '</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">resp</span> <span class="o">==</span> <span class="s">'s'</span> <span class="ow">or</span> <span class="n">resp</span> <span class="o">==</span> <span class="s">'S'</span><span class="p">:</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">excluiquemnaoe</span><span class="p">(</span><span class="n">caract</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">resp</span> <span class="o">==</span> <span class="s">'n'</span> <span class="ow">or</span> <span class="n">resp</span> <span class="o">==</span> <span class="s">'N'</span><span class="p">:</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">excluiqueme</span><span class="p">(</span><span class="n">caract</span><span class="p">)</span></code></pre></figure>
+
+<p>Enfim, a <code class="language-plaintext highlighter-rouge">main</code> executa o programa até que a probabilidade da característica seja 100%, enquanto não for, o programa continua perguntando ao usuário, no fim, retorna o tipo de arte que a pessoa tem propensão e mostra alguns pintores daquela característica, selecionados por mim.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"> <span class="kn">from</span> <span class="nn">classId</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">classPerguntas</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="c1">#Inferência
+</span><span class="n">se</span> <span class="o">=</span> <span class="n">Identifica</span><span class="p">()</span>
+<span class="n">pergunta</span> <span class="o">=</span> <span class="n">Pergunta</span><span class="p">()</span>
+
+
+<span class="k">while</span> <span class="n">se</span><span class="p">.</span><span class="n">probabilidade</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">100</span><span class="p">:</span>
+	<span class="n">string</span> <span class="o">=</span> <span class="n">pergunta</span><span class="p">.</span><span class="n">texto</span><span class="p">()</span>
+	<span class="n">se</span><span class="p">.</span><span class="n">pergunta</span><span class="p">(</span><span class="n">string</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">string</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+	<span class="k">print</span><span class="p">(</span><span class="s">'probabilidade é %d'</span> <span class="o">%</span><span class="p">(</span><span class="n">se</span><span class="p">.</span><span class="n">probabilidade</span><span class="p">()))</span>
+	<span class="k">print</span><span class="p">(</span><span class="n">se</span><span class="p">.</span><span class="n">resultado</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">se</span><span class="p">.</span><span class="n">probabilidade</span><span class="p">()</span> <span class="o">==</span> <span class="mi">100</span><span class="p">:</span>
+		<span class="k">print</span><span class="p">(</span><span class="s">'Arte mais indicado para você é: '</span><span class="p">,</span><span class="n">se</span><span class="p">.</span><span class="n">resultado</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">se</span><span class="p">.</span><span class="n">resultado</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">'surrealista'</span><span class="p">):</span>
+			<span class="k">print</span><span class="p">(</span><span class="s">"Pintores relacionados:</span><span class="se">\n</span><span class="s"> Vicente Van Gogh </span><span class="se">\n</span><span class="s"> Salvador Dalí </span><span class="se">\n</span><span class="s"> Pablo Picasso </span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+		<span class="k">elif</span><span class="p">(</span><span class="n">se</span><span class="p">.</span><span class="n">resultado</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">'renascentista'</span><span class="p">):</span>
+			<span class="k">print</span><span class="p">(</span><span class="s">"Pintores relacionados:</span><span class="se">\n</span><span class="s"> Michelangelo </span><span class="se">\n</span><span class="s"> Leonardo da Vinci </span><span class="se">\n</span><span class="s"> Rafael </span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+		<span class="k">elif</span><span class="p">(</span><span class="n">se</span><span class="p">.</span><span class="n">resultado</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">'minimalista'</span><span class="p">):</span>
+			<span class="k">print</span><span class="p">(</span><span class="s">"Pintores relacionados:</span><span class="se">\n</span><span class="s"> Donald Judd </span><span class="se">\n</span><span class="s"> Yayoi kusama </span><span class="se">\n</span><span class="s"> Frank Stella </span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+		<span class="k">elif</span><span class="p">(</span><span class="n">se</span><span class="p">.</span><span class="n">resultado</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">'artdigital'</span><span class="p">):</span>
+			<span class="k">print</span><span class="p">(</span><span class="s">"Pintores relacionados:</span><span class="se">\n</span><span class="s"> Mike Winkelmann </span><span class="se">\n</span><span class="s"> Banksy </span><span class="se">\n</span><span class="s"> Giselle Beiguelman </span><span class="se">\n</span><span class="s">"</span><span class="p">)</span></code></pre></figure>
+
+<p>Link para acessar o conteúdo:<a href="https://github.com/jardeleko/Python/tree/master/Machine%20Learning/Sistemas%20Especialistas">especialista-IA</a>.</p>
+
+<p><br /></p>
+
+
+</article>
+
+    </div><footer class="site-footer h-card">
+  <data class="u-url" href="/portfolio/"></data>
+
+  <div class="wrapper">
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Jardel Osorio Duarte</li><li><a class="u-email" href="mailto:jardelduarte594@gmail.com">jardelduarte594@gmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/jardeleko"><svg class="svg-icon"><use xlink:href="/portfolio/assets/minima-social-icons.svg#github"></use></svg> <span class="username">jardeleko</span></a></li><li><a href="https://www.linkedin.com/in/jardeleko"><svg class="svg-icon"><use xlink:href="/portfolio/assets/minima-social-icons.svg#linkedin"></use></svg> <span class="username">jardeleko</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Página destinada a expor alguns projetos e ferramentas qual já tenho certa familiaridade.  Inclúindo: curriculum lattes, publicações relacionadas a minha linha de pesquisa e áreas de interesse.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+</html>

@@ -1,0 +1,29 @@
+I"�<p>Este Tutorial é indicado aos usuários de distros baseadas em <code class="language-plaintext highlighter-rouge">Debian</code>. Caso contrário, parte das configurações (talvez) não sejam validas, let’s bora.</p>
+
+<p>As distros baseadas em Debian possuem um limite de arquivos a serem abertos, definidos por padrão em no máximo 1024 arquivos simultâneos. Para que os testes em escala do <code class="language-plaintext highlighter-rouge">broker Mosquitto</code> sejam executáveis nestes sistemas, uma alteração no arquivo <em>system.conf</em> é fundamental.</p>
+
+<p>A rota utilizada para encontrar este arquivo é <em>/etc/systemd/system.conf</em>;</p>
+
+<p>Então, busque a váriavel DefaultLimitNOFILE que estará comentada, defina-a para o valor máximo de arquivos que você deseja abrir em simultâneo, neste exemplo 65535.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="no">DefaultLimitNOFILE</span> <span class="o">=</span> <span class="mi">65535</span></code></pre></figure>
+
+<p>Entretando, o <code class="language-plaintext highlighter-rouge">broker Mosquitto</code> possui um limite rígido de conexões, e em sua documentação, para ajustar este limite, deve-se abrir o arquivo <a href="https://mosquitto.org/man/mosquitto-conf-5.html">mosquitto.conf</a>, que se encontra em <em>/etc/mosquitto/mosquitto.conf</em> e incluir a variável max_connections;</p>
+
+<figure class="highlight"><pre><code class="language-scheme" data-lang="scheme"> <span class="nv">max_connections</span> <span class="mi">-1</span></code></pre></figure>
+
+<p>O valor -1 consiste em ilimitadas conexões.</p>
+
+<p>No manual do <a href="https://mosquitto.org/man/mosquitto-conf-5.html">mosquitto.conf</a> é aconselhado uma alteração no arquivo <em>limits.conf</em>, encontrado no diretório <em>/etc/security/limits.conf</em>. Logo, devemos inserir duas linhas que reforçam os limites rígidos e também de software do sistema, ambos definidos em 65535.</p>
+
+<figure class="highlight"><pre><code class="language-scheme" data-lang="scheme"><span class="o">#</span><span class="nv">&lt;domain&gt;</span>      <span class="nv">&lt;type&gt;</span>  <span class="nv">&lt;item&gt;</span>         <span class="nv">&lt;value&gt;</span>
+<span class="o">#</span>
+<span class="nv">*</span>               <span class="nv">hard</span>    <span class="nv">nofile</span>         <span class="mi">65535</span>
+<span class="nv">*</span>               <span class="nv">soft</span>    <span class="nv">nofile</span>         <span class="mi">65535</span>
+<span class="o">#</span> <span class="nv">End</span> <span class="nv">of</span> <span class="nv">file</span></code></pre></figure>
+
+<p>Enfim, para que as atualizações façam efeito, torna-se necessário reinicializar o <code class="language-plaintext highlighter-rouge">daemon</code> do sistema e também o <code class="language-plaintext highlighter-rouge">serviço Mosquitto</code>.</p>
+
+<p><br /></p>
+
+:ET
