@@ -1,0 +1,59 @@
+I"�$<p>Acredito que todos os desenvolvedores passam pelo momento Ecommerce (aprendizagem ou mercado), justamente pela gama de serviços hospedados neste segmento atualmente, o que oferece praticidade aos adeptos (de liverys) e consequentemente gera empregos aos entregadores, neste projeto, busquei fazer algo funcional que ampliasse meu conhecimento com components do <code class="language-plaintext highlighter-rouge">React</code>, sendo assim, foquei na utilização do <code class="language-plaintext highlighter-rouge">styled components</code> e alguns <code class="language-plaintext highlighter-rouge">Hooks</code>, além do contato com o <code class="language-plaintext highlighter-rouge">Redux</code> e <code class="language-plaintext highlighter-rouge">Redux Persist</code>, razões: tokens persistentes para o carrinho de compras… O resultado realmente me surpreendeu, não costumo implementar em full stack e concluir praticamente todas as etapas de construção, até em razão da demanda x tempo, entretanto este projeto me entusiasmou a este ponto. Inclusive, também foi implementado uma página adminastradora ao manager do site, que também inclui uma análises (analytics) de vendas em relação aos meses anteriores.</p>
+
+<p>As etapas identidades foram selecionadas na seguinte lista:</p>
+<ul>
+  <li>Método checkout com o serviço <code class="language-plaintext highlighter-rouge">stripe</code>;</li>
+  <li>o carrinho de compras utilizando <code class="language-plaintext highlighter-rouge">redux toolkit</code> e <code class="language-plaintext highlighter-rouge">redux persist</code>;</li>
+  <li>Págine de gestão com querys específicas;</li>
+</ul>
+
+<p>Em todo ecommerce é necessário um método de pagamento, é o que caracteriza esse serviço. Pensando assim, adotei o <a href="https://stripe.com">Stripe</a> como serviço, acreditando ser um dos mais seguros e com custos interessantes. Para que essa ferramenta funcione corretamente, criei uma conta na página, o que garantiu as minhas chaves (pública e secreta), da mesma forma o stripe fornece um código para integração do método checkout. Logo, meu código ficou da seguinte forma:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">import</span> <span class="no">StripeCheckout</span> <span class="n">from</span> <span class="s1">'react-stripe-checkout'</span>
+<span class="n">const</span> <span class="no">KEY</span> <span class="o">=</span> <span class="n">process</span><span class="p">.</span><span class="nf">env</span><span class="o">.</span><span class="no">REACT_APP_STRIPE</span> <span class="sr">//</span><span class="kp">public</span> <span class="n">key</span>
+<span class="n">const</span> <span class="p">[</span><span class="n">stripeToken</span><span class="p">,</span> <span class="n">setStripeToken</span><span class="p">]</span> <span class="o">=</span> <span class="n">useState</span><span class="p">(</span><span class="n">null</span><span class="p">)</span>
+
+<span class="n">const</span> <span class="n">onToken</span> <span class="o">=</span> <span class="p">(</span><span class="n">token</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="sr">//</span><span class="n">pegando</span> <span class="n">o</span> <span class="n">token</span> <span class="n">gerado</span> <span class="n">e</span> <span class="n">atribuindo</span> <span class="n">a</span> <span class="n">variavel</span>  
+    <span class="n">setStripeToken</span><span class="p">(</span><span class="n">token</span><span class="p">);</span> 
+<span class="p">}</span>
+
+<span class="n">useEffect</span><span class="p">(()</span><span class="o">=&gt;</span> <span class="p">{</span> <span class="sr">//</span> <span class="n">assim</span> <span class="n">que</span> <span class="n">o</span> <span class="n">token</span> <span class="n">foi</span> <span class="n">gerando</span> 
+    <span class="n">const</span> <span class="n">makeRequest</span> <span class="o">=</span> <span class="n">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="sr">//</span><span class="n">fun</span><span class="err">çã</span><span class="n">o</span> <span class="n">de</span> <span class="n">envio</span> <span class="n">ao</span> <span class="n">banco</span> <span class="n">de</span> <span class="n">dados</span>
+    <span class="n">const</span> <span class="n">localPrice</span> <span class="o">=</span> <span class="n">cart</span><span class="p">.</span><span class="nf">total</span> <span class="o">*</span> <span class="mi">100</span><span class="p">;</span>
+    <span class="n">await</span> <span class="n">publicRequest</span><span class="p">.</span><span class="nf">post</span><span class="p">(</span><span class="s2">"/checkout/payment"</span><span class="p">,</span> <span class="p">{</span> 
+        <span class="ss">tokenId: </span><span class="n">stripeToken</span><span class="p">.</span><span class="nf">id</span><span class="p">,</span> 
+        <span class="ss">amount: </span><span class="n">localPrice</span><span class="p">,</span>
+    <span class="p">}).</span><span class="nf">then</span><span class="p">((</span><span class="n">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="n">history</span><span class="p">(</span><span class="s2">"/success"</span><span class="p">,</span> <span class="p">{</span><span class="n">state</span><span class="p">:{</span><span class="n">data</span><span class="ss">:res</span><span class="p">.</span><span class="nf">data</span><span class="p">}})</span>  <span class="o">/</span><span class="sr">/se tudo deu certo com a compra, redireciona o cliente
+        /</span><span class="o">/</span><span class="n">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="n">res</span><span class="p">.</span><span class="nf">data</span><span class="p">)</span>  
+    <span class="p">}).</span><span class="nf">catch</span><span class="p">((</span><span class="n">err</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="n">history</span><span class="p">(</span><span class="s2">"/failed"</span><span class="p">,</span> <span class="p">{</span><span class="n">state</span><span class="p">:{</span><span class="n">data</span><span class="ss">:err</span><span class="p">.</span><span class="nf">response</span><span class="p">.</span><span class="nf">data</span><span class="p">}})</span>  <span class="o">/</span><span class="sr">/se algo deu errado com cartão, imprime o mal sucedido
+    })
+}
+stripeToken &amp;&amp; makeRequest(); /</span><span class="o">/</span><span class="n">se</span> <span class="n">o</span> <span class="n">token</span> <span class="n">existe</span> <span class="n">chama</span> <span class="n">a</span> <span class="n">fun</span><span class="err">çã</span><span class="n">o</span> <span class="n">de</span> <span class="n">envio</span>
+<span class="p">},</span> <span class="p">[</span><span class="n">stripeToken</span><span class="p">,</span> <span class="n">cart</span><span class="p">.</span><span class="nf">total</span><span class="p">,</span> <span class="n">history</span><span class="p">])</span>
+
+
+<span class="k">return</span> <span class="p">(</span> <span class="sr">//</span> <span class="n">importando</span> <span class="n">o</span> <span class="n">m</span><span class="err">é</span><span class="n">todo</span> <span class="n">no</span> <span class="n">meu</span> <span class="n">front</span> 
+    <span class="o">&lt;</span><span class="no">StripeCheckout</span>
+        <span class="nb">name</span><span class="o">=</span><span class="s2">"Santa Colina"</span> <span class="o">/</span><span class="sr">/nome site
+        image="https:/</span><span class="o">/</span><span class="n">images</span><span class="p">.</span><span class="nf">vexels</span><span class="p">.</span><span class="nf">com</span><span class="o">/</span><span class="n">media</span><span class="o">/</span><span class="n">users</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span><span class="mi">200093</span><span class="o">/</span><span class="n">isolated</span><span class="o">/</span><span class="n">preview</span><span class="o">/</span><span class="mi">596</span><span class="n">f0d8cb733b17268752d044976f102</span><span class="o">-</span><span class="n">icone</span><span class="o">-</span><span class="n">de</span><span class="o">-</span><span class="n">sacola</span><span class="o">-</span><span class="n">de</span><span class="o">-</span><span class="n">compras</span><span class="p">.</span><span class="nf">png</span><span class="s2">" //avtar
+        billingAddress
+        shippingAddress
+        description={`TOTAL IS $ ${cart.total}`} 
+        amount={cart.total*100}
+        token={onToken} //chamando a função onToken
+        stripeKey={KEY} //utilizando a minha public
+        &gt;                       
+        &lt;Button&gt;BUY NOW&lt;/Button&gt;
+    &lt;/StripeCheckout&gt;    
+)
+</span></code></pre></div></div>
+
+<p>De outra forma, no backend, a implementação do checkout ficou assim&gt;</p>
+
+<p>O fonte deste projeto pode estar sendo acessado neste <a href="https://github.com/jardeleko/ecommerce">repositório</a>.</p>
+
+<p><br /></p>
+
+:ET

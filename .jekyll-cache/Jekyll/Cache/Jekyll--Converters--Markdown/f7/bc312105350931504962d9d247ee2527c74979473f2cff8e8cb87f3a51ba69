@@ -1,0 +1,115 @@
+I"S<p>A algum tempo estava evitando os projetos mobiles, razões: ferramentas não híbridas ou complexas e pesadas (embora já ter desenvolvido antes utilizando <code class="language-plaintext highlighter-rouge">Ionic</code> e <code class="language-plaintext highlighter-rouge">Java // Kotlin</code>), entretanto, o <code class="language-plaintext highlighter-rouge">React Native</code> junto com o <code class="language-plaintext highlighter-rouge">EXPO</code> ampliaram meu interesse em estar desenvolvendo pequenos projetos como este. Aliás, entre as app views testadas, o native foi um dos melhores em razão do bundler (considerando análise sintática). Enfim, para testar melhor a ferramenta, busquei um problema existente baseando-se no aplicativo Airbnb e utilizando templates encontrados em repositórios do Github. Sendo assim, o projeto consistiu em uma aplicação de aluguéis de casas (ou cômodos), garagens e salas comerciais; onde a principal característica pode ser definida pela locação sem intermediações (imobiliárias ou corretores), ou seja, os cliente ofertando seus imóveis e se comunicando entre si.</p>
+
+<p>Buscando não publicar uma documentação extensa, separei três etapas que deram identidade ao projeto, sendo estas: Chat implementado com a lib <code class="language-plaintext highlighter-rouge">Gifted Chat</code>, Autenticação via email (em razão de ter que desenvolver um app em cloud na <code class="language-plaintext highlighter-rouge">GCP</code>) e por fim, a redefinição de senha utilizando um servidor <code class="language-plaintext highlighter-rouge">SMTP</code>, para isto utilizei a <code class="language-plaintext highlighter-rouge">Sendinblue</code>.</p>
+
+<p>Curiosamente, passei uma certa dificuldade ao implementar o chat em razão da minha insistência em utilizar <code class="language-plaintext highlighter-rouge">websockets</code> através do framework <code class="language-plaintext highlighter-rouge">socket.io</code>, o que posteriormente vi que era impossível na versão atual do Gifted, ainda não sei porque, mas essas informações sempre estão em um limbo da internet e acabam roubando muito tempo de quem as necessita. Mas o resultado foi interessante, abaixo alguns trechos que exemplificam o uso desta lib.</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">GiftedChat</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react-native-gifted-chat</span><span class="dl">'</span>
+	<span class="kd">const</span> <span class="p">[</span><span class="nx">messages</span><span class="p">,</span> <span class="nx">setMessages</span><span class="p">]</span> <span class="o">=</span> <span class="nx">useState</span><span class="p">([])</span>    <span class="c1">//variáveis para lançar novas mensagens</span>
+    <span class="c1">//normalmente essas variaveis são iniciadas antes, buscando dados historicos da conversação dos usuarios relacionados, publicador e current </span>
+	<span class="kd">const</span> <span class="nx">onSend</span> <span class="o">=</span> <span class="nx">useCallback</span><span class="p">((</span><span class="nx">messages</span> <span class="o">=</span> <span class="p">[])</span> <span class="o">=&gt;</span> <span class="p">{</span>
+		<span class="nx">setMessages</span><span class="p">(</span><span class="nx">previousMessages</span> <span class="o">=&gt;</span> <span class="nx">GiftedChat</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">previousMessages</span><span class="p">,</span> <span class="nx">messages</span><span class="p">))</span> <span class="c1">//empilha a nova mensagem</span>
+		<span class="nx">asyncSubmitMessage</span><span class="p">(</span><span class="nx">messages</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1">//função que envia a mensagem ao banco de dados</span>
+	<span class="p">},</span> <span class="p">[</span><span class="nx">control</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="o">&lt;</span><span class="nx">GiftedChat</span> <span class="c1">//utilizando a ferramenta </span>
+            <span class="nx">messages</span><span class="o">=</span><span class="p">{</span><span class="nx">messages</span><span class="p">}</span>
+            <span class="nx">onSend</span><span class="o">=</span><span class="p">{</span><span class="nx">text</span> <span class="o">=&gt;</span> <span class="nx">onSend</span><span class="p">(</span><span class="nx">text</span><span class="p">)}</span>
+            
+            <span class="nx">user</span><span class="o">=</span><span class="p">{{</span>
+                <span class="na">_id</span><span class="p">:</span> <span class="nx">currentUser</span><span class="p">.</span><span class="nx">_id</span><span class="p">,</span>
+                <span class="na">idRec</span><span class="p">:</span> <span class="nx">idReceiver</span> <span class="o">!==</span> <span class="nx">currentUser</span><span class="p">.</span><span class="nx">_id</span> <span class="p">?</span> <span class="nx">idReceiver</span> <span class="p">:</span> <span class="dl">"</span><span class="s2">errorId</span><span class="dl">"</span><span class="p">,</span>
+                <span class="na">name</span><span class="p">:</span> <span class="nx">currentUser</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
+                <span class="na">idHouse</span><span class="p">:</span> <span class="nx">idHouse</span>
+            <span class="p">}}</span>
+        
+        <span class="sr">/</span><span class="err">&gt;
+</span>    <span class="p">)</span>
+</code></pre></div></div>
+
+<p>O Google Cloud Platform é um servidor muito amigável, com ele, foi simples implementar o serviço externo (app ou página para autenticação). E assim que gerada as credenciais, a implementação deu-se da seguinte forma:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">WebBrowser</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">expo-web-browser</span><span class="dl">'</span>
+<span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">Google</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">expo-auth-session/providers/google</span><span class="dl">'</span> <span class="c1">//lib indicada pela doc do expo</span>
+
+<span class="nx">WebBrowser</span><span class="p">.</span><span class="nx">maybeCompleteAuthSession</span><span class="p">()</span> <span class="c1">//incia o webbrowser para autenticações</span>
+    <span class="kd">const</span> <span class="p">[</span><span class="nx">accessTk</span><span class="p">,</span> <span class="nx">setAccessTk</span><span class="p">]</span> <span class="o">=</span> <span class="nx">useState</span><span class="p">(</span><span class="kc">null</span><span class="p">)</span>
+    <span class="kd">const</span> <span class="p">[</span><span class="nx">userInfo</span><span class="p">,</span> <span class="nx">setUserInfo</span><span class="p">]</span> <span class="o">=</span> <span class="nx">useState</span><span class="p">(</span><span class="kc">null</span><span class="p">)</span>
+    <span class="kd">const</span> <span class="p">[</span><span class="nx">request</span><span class="p">,</span> <span class="nx">response</span><span class="p">,</span> <span class="nx">promptAsync</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Google</span><span class="p">.</span><span class="nx">useIdTokenAuthRequest</span><span class="p">({</span> <span class="c1">//utilizando as credenciais criadas na nuvem</span>
+        <span class="na">expoClientId</span><span class="p">:</span> <span class="dl">'</span><span class="s1">347880960520-sje8ods0rcbl5v6lpadu6pmsjo1p********.apps.googleusercontent.com</span><span class="dl">'</span><span class="p">,</span>
+        <span class="na">androidClientId</span><span class="p">:</span> <span class="dl">'</span><span class="s1">347880960520-of68n10pgllkm6nn61ppnb5v351********.apps.googleusercontent.com</span><span class="dl">'</span><span class="p">,</span>
+        <span class="na">iosClientId</span><span class="p">:</span> <span class="dl">'</span><span class="s1">347880960520-******************.apps.googleusercontent.com</span><span class="dl">'</span>
+    <span class="p">})</span>
+
+    <span class="nx">useEffect</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="c1">//use effect para verificar se a autenticação gmail foi iniciada, se sim, verifica o exito </span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">response</span><span class="p">?.</span><span class="nx">type</span> <span class="o">===</span><span class="dl">'</span><span class="s1">success</span><span class="dl">'</span><span class="p">){</span> <span class="c1">//se exito</span>
+            <span class="nx">setAccessTk</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id_token</span><span class="p">)</span> <span class="c1">//pega o token do usuario</span>
+            <span class="nx">accessTk</span> <span class="o">&amp;&amp;</span> <span class="nx">fetchUserInfo</span><span class="p">()</span> <span class="c1">//se tem token chama a função para buscar dados do usuario</span>
+        <span class="p">}</span>
+    <span class="p">},[</span><span class="nx">response</span><span class="p">,</span> <span class="nx">accessTk</span><span class="p">])</span>
+
+    <span class="k">async</span> <span class="kd">function</span> <span class="nx">fetchUserInfo</span><span class="p">(){</span> <span class="c1">//aqui esta o pulo do gato, demorei um pouco p encontrar esta query</span>
+    <span class="c1">//como tudo na vida tem um preço, este deve ter me custado umas 2 ou 3 horas hahaha </span>
+        <span class="kd">let</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">fetch</span><span class="p">(</span><span class="s2">`https://oauth2.googleapis.com/tokeninfo?id_token=</span><span class="p">${</span><span class="nx">accessTk</span><span class="p">}</span><span class="s2">`</span><span class="p">)</span> <span class="c1">//dita query sobre quem eu falo</span>
+        <span class="kd">const</span> <span class="nx">userInfo</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">()</span> <span class="c1">//se temos resposta temos json format</span>
+        <span class="nx">setUserInfo</span><span class="p">(</span><span class="nx">userInfo</span><span class="p">)</span> <span class="c1">//atribuindo os dados a minha variavel userInfo</span>
+    <span class="p">}</span>
+</code></pre></div></div>
+
+<p>Na página da sendinblue, o serviço é praticamente resgatar as variáveis (caso escolha utilizar via smtp): host, port, cliente, no meu projeto, escolhi integrar desta forma, entretanto, há também uma opção de integração via api. No backend, a ferramenta necessária foi a lib <code class="language-plaintext highlighter-rouge">Nodemailer</code>, que garantiu a conexão com o serviço da sendin, permitindo o disparo de emails a todos os clientes que solicitarem a redefinição de senha, o fonte após a implementação:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">nodemailer</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">nodemailer</span><span class="dl">'</span><span class="p">)</span> <span class="c1">//importa o nodemailer</span>
+<span class="kd">const</span> <span class="nx">router</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">express</span><span class="dl">'</span><span class="p">).</span><span class="nx">Router</span><span class="p">()</span>
+
+<span class="kd">const</span> <span class="nx">transport</span> <span class="o">=</span> <span class="nx">nodemailer</span><span class="p">.</span><span class="nx">createTransport</span><span class="p">({</span>  <span class="c1">//n-mailer criando a variavel de conexão e transporte</span>
+  <span class="na">host</span><span class="p">:</span> <span class="dl">"</span><span class="s2">smtp-relay.sendinblue.com</span><span class="dl">"</span><span class="p">,</span>
+  <span class="na">port</span><span class="p">:</span> <span class="mi">587</span><span class="p">,</span>
+  <span class="na">auth</span><span class="p">:</span> <span class="p">{</span>
+    <span class="na">user</span><span class="p">:</span> <span class="dl">"</span><span class="s2">jardelduarte***@gmail.com</span><span class="dl">"</span><span class="p">,</span>
+    <span class="na">pass</span><span class="p">:</span> <span class="dl">"</span><span class="s2">HIa4J1T0vsynw****</span><span class="dl">"</span>
+  <span class="p">}</span>
+  <span class="nx">router</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="dl">'</span><span class="s1">/forgot</span><span class="dl">'</span><span class="p">,</span> <span class="k">async</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="c1">// iniciando a rota</span>
+  <span class="nx">User</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span><span class="na">email</span><span class="p">:</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">email</span><span class="p">}).</span><span class="nx">then</span><span class="p">((</span><span class="nx">user</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">user</span><span class="p">){</span>
+      <span class="nx">res</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mi">422</span><span class="p">).</span><span class="nx">json</span><span class="p">(</span><span class="dl">'</span><span class="s1">user not exists!</span><span class="dl">'</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="kd">const</span> <span class="nx">expired</span> <span class="o">=</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span> <span class="o">+</span> <span class="p">(</span><span class="mi">3600000</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="c1">//variavel que gera um timeout de 30 minutos para expiração do token</span>
+    <span class="kd">const</span> <span class="nx">aux</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">65536</span><span class="p">)</span> <span class="c1">//o token de no minimo 4 digitos gerados ao aleatorio</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">aux</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">1234</span><span class="p">)</span> <span class="nx">aux</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">65536</span><span class="p">)</span>
+    <span class="nx">user</span><span class="p">.</span><span class="nx">passwdToken</span> <span class="o">=</span> <span class="nb">String</span><span class="p">(</span><span class="nx">aux</span><span class="p">)</span>
+    <span class="nx">user</span><span class="p">.</span><span class="nx">expireToken</span> <span class="o">=</span> <span class="nx">expired</span>
+    <span class="nx">user</span><span class="p">.</span><span class="nx">save</span><span class="p">().</span><span class="nx">then</span><span class="p">((</span><span class="nx">result</span><span class="p">)</span> <span class="o">=&gt;</span><span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span>
+      <span class="nx">transport</span><span class="p">.</span><span class="nx">sendMail</span><span class="p">({</span> <span class="c1">//apos verificar que o usuario existe no bd, a variavel global transport, envia o email com os dados do usuario e com o email padrão definido no html</span>
+        <span class="na">to</span><span class="p">:</span><span class="nx">user</span><span class="p">.</span><span class="nx">email</span><span class="p">,</span>
+        <span class="na">from</span><span class="p">:</span> <span class="dl">"</span><span class="s2">no-replay@facilitaimoveis.com.br</span><span class="dl">"</span><span class="p">,</span>
+        <span class="na">subject</span><span class="p">:</span> <span class="dl">"</span><span class="s2">Redifinição de Senha, Facilita Imóveis</span><span class="dl">"</span><span class="p">,</span>
+        <span class="na">html</span><span class="p">:</span> <span class="dl">"</span><span class="s2">&lt;p&gt;&lt;h3&gt;Olá, </span><span class="dl">"</span><span class="o">+</span><span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="o">+</span><span class="dl">"</span><span class="s2">.&lt;h3&gt;&lt;/p&gt; &lt;br&gt;&lt;br&gt; &lt;p&gt;Vimos que você solicitou a recuperação de senha.&lt;/p&gt; &lt;p&gt;Para continuar, insira o código &lt;strong&gt;</span><span class="dl">"</span> <span class="o">+</span> <span class="nx">aux</span> <span class="o">+</span> <span class="dl">"</span><span class="s2">&lt;/strong&gt;  na página de verificação iniciada no seu aplicativo..&lt;/p&gt;</span><span class="dl">"</span><span class="p">,</span>
+      <span class="p">})</span>
+      <span class="nx">res</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mi">200</span><span class="p">).</span><span class="nx">json</span><span class="p">({</span><span class="na">token</span><span class="p">:</span><span class="nx">aux</span><span class="p">,</span> <span class="nx">expired</span><span class="p">})</span> <span class="c1">//se success, encaminha as variaveis para tratar no frontend</span>
+    <span class="p">}).</span><span class="nx">then</span><span class="p">((</span><span class="nx">err</span><span class="p">)</span> <span class="o">=&gt;</span><span class="p">{</span>
+      <span class="nx">res</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mi">500</span><span class="p">).</span><span class="nx">json</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+    <span class="p">})</span>
+  <span class="p">}).</span><span class="k">catch</span><span class="p">((</span><span class="nx">err</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mi">500</span><span class="p">).</span><span class="nx">json</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+  <span class="p">})</span>
+<span class="p">})</span>
+<span class="p">})</span>
+
+</code></pre></div></div>
+
+<p>Enfim, gostei dos desafios durante esta construção, em principal pela facilidade de desenvolver mobile com a ferramenta EXPO, o código fonte pode ser acessado neste <a href="https://github.com/jardeleko/facilita">repositório</a> e abaixo, algumas animações com o resultado final de duas etapas detalhadas nesta publicação.</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td><img src="https://firebasestorage.googleapis.com/v0/b/facilitastorage.appspot.com/o/chat.gif?alt=media&amp;token=00c220ab-69a3-4ef4-8460-bc012e103245" alt="chat" /></td>
+      <td><img src="https://firebasestorage.googleapis.com/v0/b/facilitastorage.appspot.com/o/login.gif?alt=media&amp;token=f77e33f7-ef3d-4d1b-851a-3327a22a4ef0" alt="login" /></td>
+    </tr>
+  </tbody>
+</table>
+
+<p><br /></p>
+
+:ET

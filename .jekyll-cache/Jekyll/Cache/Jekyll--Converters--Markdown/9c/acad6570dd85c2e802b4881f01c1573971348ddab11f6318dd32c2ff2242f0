@@ -1,0 +1,256 @@
+I"��<p>Acredito que todos os desenvolvedores passam pelo momento Ecommerce (aprendizagem ou mercado), justamente pela gama de serviços hospedados neste segmento atualmente, o que oferece praticidade aos adeptos (deliverys) e consequentemente gera empregos aos entregadores, neste projeto, busquei fazer algo funcional que ampliasse meu conhecimento com components do <code class="language-plaintext highlighter-rouge">React</code>, sendo assim, foquei na utilização do <code class="language-plaintext highlighter-rouge">styled components</code> e alguns <code class="language-plaintext highlighter-rouge">Hooks</code>, além do contato com o <code class="language-plaintext highlighter-rouge">Redux</code> e <code class="language-plaintext highlighter-rouge">Redux Persist</code>, razões: tokens persistentes para o carrinho de compras… O resultado realmente me surpreendeu, não costumo implementar full stack e concluir praticamente todas as etapas de construção, até em razão da demanda x tempo, entretanto este projeto me entusiasmou a este ponto. Inclusive, também foi implementado uma página adminastradora ao manager do site, que também inclui análises (analytics) de vendas em relação aos meses anteriores.</p>
+
+<p>As etapas identidades foram selecionadas na seguinte lista:</p>
+<ul>
+  <li>Método checkout com o serviço <code class="language-plaintext highlighter-rouge">stripe</code>;</li>
+  <li>o carrinho de compras utilizando <code class="language-plaintext highlighter-rouge">redux toolkit</code> e <code class="language-plaintext highlighter-rouge">redux persist</code>;</li>
+  <li>Página de gestão com querys específicas;</li>
+</ul>
+
+<p>Em todo ecommerce é necessário um método de pagamento, é o que caracteriza esse serviço. Pensando assim, adotei o <a href="https://stripe.com">Stripe</a> como serviço, acreditando ser um dos mais seguros e com custos interessantes. Para que essa ferramenta funcione corretamente, criei uma conta na página, o que garantiu as minhas chaves (pública e secreta), da mesma forma o stripe fornece um código para integração do método checkout. Logo, meu código ficou da seguinte forma:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">StripeCheckout</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react-stripe-checkout</span><span class="dl">'</span>
+<span class="kd">const</span> <span class="nx">KEY</span> <span class="o">=</span> <span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">REACT_APP_STRIPE</span> <span class="c1">//public key</span>
+<span class="kd">const</span> <span class="p">[</span><span class="nx">stripeToken</span><span class="p">,</span> <span class="nx">setStripeToken</span><span class="p">]</span> <span class="o">=</span> <span class="nx">useState</span><span class="p">(</span><span class="kc">null</span><span class="p">)</span>
+
+<span class="kd">const</span> <span class="nx">onToken</span> <span class="o">=</span> <span class="p">(</span><span class="nx">token</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="c1">//pegando o token gerado e atribuindo a variavel  </span>
+    <span class="nx">setStripeToken</span><span class="p">(</span><span class="nx">token</span><span class="p">);</span> 
+<span class="p">}</span>
+
+<span class="nx">useEffect</span><span class="p">(()</span><span class="o">=&gt;</span> <span class="p">{</span> <span class="c1">// assim que o token foi gerando </span>
+    <span class="kd">const</span> <span class="nx">makeRequest</span> <span class="o">=</span> <span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="c1">//função de envio ao banco de dados</span>
+    <span class="kd">const</span> <span class="nx">localPrice</span> <span class="o">=</span> <span class="nx">cart</span><span class="p">.</span><span class="nx">total</span> <span class="o">*</span> <span class="mi">100</span><span class="p">;</span>
+    <span class="k">await</span> <span class="nx">publicRequest</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="dl">"</span><span class="s2">/checkout/payment</span><span class="dl">"</span><span class="p">,</span> <span class="p">{</span> 
+        <span class="na">tokenId</span><span class="p">:</span> <span class="nx">stripeToken</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> 
+        <span class="na">amount</span><span class="p">:</span> <span class="nx">localPrice</span><span class="p">,</span>
+    <span class="p">}).</span><span class="nx">then</span><span class="p">((</span><span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">history</span><span class="p">(</span><span class="dl">"</span><span class="s2">/success</span><span class="dl">"</span><span class="p">,</span> <span class="p">{</span><span class="na">state</span><span class="p">:{</span><span class="na">data</span><span class="p">:</span><span class="nx">res</span><span class="p">.</span><span class="nx">data</span><span class="p">}})</span>  <span class="c1">//se tudo deu certo com a compra, redireciona o cliente</span>
+        <span class="c1">//console.log(res.data)  </span>
+    <span class="p">}).</span><span class="k">catch</span><span class="p">((</span><span class="nx">err</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">history</span><span class="p">(</span><span class="dl">"</span><span class="s2">/failed</span><span class="dl">"</span><span class="p">,</span> <span class="p">{</span><span class="na">state</span><span class="p">:{</span><span class="na">data</span><span class="p">:</span><span class="nx">err</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">}})</span>  <span class="c1">//se algo deu errado com cartão, imprime o mal sucedido</span>
+    <span class="p">})</span>
+<span class="p">}</span>
+<span class="nx">stripeToken</span> <span class="o">&amp;&amp;</span> <span class="nx">makeRequest</span><span class="p">();</span> <span class="c1">//se o token existe chama a função de envio</span>
+<span class="p">},</span> <span class="p">[</span><span class="nx">stripeToken</span><span class="p">,</span> <span class="nx">cart</span><span class="p">.</span><span class="nx">total</span><span class="p">,</span> <span class="nx">history</span><span class="p">])</span>
+
+
+<span class="k">return</span> <span class="p">(</span> <span class="c1">// importando o método no meu front </span>
+    <span class="o">&lt;</span><span class="nx">StripeCheckout</span>
+        <span class="nx">name</span><span class="o">=</span><span class="dl">"</span><span class="s2">Santa Colina</span><span class="dl">"</span> <span class="c1">//nome site</span>
+        <span class="nx">image</span><span class="o">=</span><span class="dl">"</span><span class="s2">https://images.vexels.com/media/users/3/200093/isolated/preview/596f0d8cb733b17268752d044976f102-icone-de-sacola-de-compras.png</span><span class="dl">"</span> <span class="c1">//avtar</span>
+        <span class="nx">billingAddress</span>
+        <span class="nx">shippingAddress</span>
+        <span class="nx">description</span><span class="o">=</span><span class="p">{</span><span class="s2">`TOTAL IS $ </span><span class="p">${</span><span class="nx">cart</span><span class="p">.</span><span class="nx">total</span><span class="p">}</span><span class="s2">`</span><span class="p">}</span> 
+        <span class="nx">amount</span><span class="o">=</span><span class="p">{</span><span class="nx">cart</span><span class="p">.</span><span class="nx">total</span><span class="o">*</span><span class="mi">100</span><span class="p">}</span>
+        <span class="nx">token</span><span class="o">=</span><span class="p">{</span><span class="nx">onToken</span><span class="p">}</span> <span class="c1">//chamando a função onToken</span>
+        <span class="nx">stripeKey</span><span class="o">=</span><span class="p">{</span><span class="nx">KEY</span><span class="p">}</span> <span class="c1">//utilizando a minha public</span>
+        <span class="o">&gt;</span>                       
+        <span class="o">&lt;</span><span class="nx">Button</span><span class="o">&gt;</span><span class="nx">BUY</span> <span class="nx">NOW</span><span class="o">&lt;</span><span class="sr">/Button</span><span class="err">&gt;
+</span>    <span class="o">&lt;</span><span class="sr">/StripeCheckout</span><span class="err">&gt;
+</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>De outra forma, no backend, a implementação da rota payment ficou assim:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">dotenv</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">dotenv</span><span class="dl">'</span><span class="p">).</span><span class="nx">config</span><span class="p">()</span>
+<span class="kd">const</span> <span class="nx">router</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">express</span><span class="dl">'</span><span class="p">).</span><span class="nx">Router</span><span class="p">()</span>
+<span class="kd">const</span> <span class="nx">stripe</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">stripe</span><span class="dl">'</span><span class="p">)(</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">STRIPE_KEY</span><span class="p">)</span> <span class="c1">//secret </span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="dl">"</span><span class="s2">/payment</span><span class="dl">"</span><span class="p">,</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span> 
+
+<span class="nx">stripe</span><span class="p">.</span><span class="nx">charges</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span> <span class="c1">//utilizando o método charges para conectar com o serviço na página</span>
+    <span class="na">source</span><span class="p">:</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">tokenId</span><span class="p">,</span>
+    <span class="na">amount</span><span class="p">:</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">amount</span><span class="p">,</span>
+    <span class="na">currency</span><span class="p">:</span> <span class="dl">"</span><span class="s2">brl</span><span class="dl">"</span><span class="p">,</span> <span class="c1">//identificando a moéda corrente usd/ eur/ neste caso brl </span>
+    <span class="p">}).</span><span class="nx">then</span><span class="p">((</span><span class="nx">stripeRes</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mi">200</span><span class="p">).</span><span class="nx">json</span><span class="p">(</span><span class="nx">stripeRes</span><span class="p">)</span>  <span class="c1">//se a resposta for ok, os dados estão aceito</span>
+
+    <span class="p">}).</span><span class="k">catch</span><span class="p">((</span><span class="nx">stripeError</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">stripeError</span><span class="p">)</span> <span class="c1">//caso houver erro no pagamento</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mi">500</span><span class="p">).</span><span class="nx">json</span><span class="p">(</span><span class="nx">stripeError</span><span class="p">)</span>
+    <span class="p">})</span>
+<span class="p">})</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">router</span>
+</code></pre></div></div>
+
+<p>Para construir o carrinho de compras, é fundamental que a responsividade ocorra, principalmente quanto existe alteração na quantidade de itens ou na persistência dos itens, ou seja, quando o cliente sair da página. para isso utilizei o redux que retornava e atualização as incrementação quando a função era acionada. implementação em duas partes, página Product que acina a cartRedux assim que acontece um requisição:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//page product </span>
+
+<span class="k">import</span> <span class="p">{</span> <span class="nx">addProduct</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">../redux/cartRedux</span><span class="dl">'</span>
+
+<span class="kd">const</span> <span class="p">[</span><span class="nx">quantity</span><span class="p">,</span> <span class="nx">setQuantity</span><span class="p">]</span> <span class="o">=</span> <span class="nx">useState</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="kd">const</span> <span class="nx">handleQuantity</span> <span class="o">=</span> <span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="c1">//função que verifica, incrementa or decrementa </span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">type</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">dec</span><span class="dl">'</span><span class="p">){</span>
+        <span class="nx">setQuantity</span><span class="p">(</span><span class="nx">quantity</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="c1">//se remove decrementa</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">quantity</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">)</span> <span class="nx">setQuantity</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+        <span class="nx">setQuantity</span><span class="p">(</span><span class="nx">quantity</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="c1">//se add incrementa</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">handleClick</span> <span class="o">=</span> <span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="c1">//se foi clicado para enviar ao carrinho</span>
+    <span class="k">await</span> <span class="nx">userRequest</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="dl">"</span><span class="s2">/cart</span><span class="dl">"</span><span class="p">,</span> <span class="p">{</span> <span class="c1">//rota para criar um carrinho gerado ao banco de dados, independente de o cliente finalizar ou nao a compra, aqui temos dados para depois lançar promoçoes ou avisos ao cliente </span>
+    <span class="na">userId</span><span class="p">:</span> <span class="nx">currentUser</span><span class="p">.</span><span class="nx">_id</span><span class="p">,</span> 
+    <span class="na">products</span><span class="p">:</span> <span class="p">{</span><span class="na">productId</span><span class="p">:</span><span class="nx">id</span><span class="p">,</span> <span class="na">quantity</span><span class="p">:</span><span class="nx">quantity</span><span class="p">},</span>    
+    <span class="p">}).</span><span class="nx">then</span><span class="p">((</span><span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">_idCart</span> <span class="o">=</span> <span class="nx">res</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">_id</span>
+        <span class="nx">dispatch</span><span class="p">(</span><span class="nx">addProduct</span><span class="p">({</span><span class="nx">_idCart</span><span class="p">,</span> <span class="p">...</span><span class="nx">product</span><span class="p">,</span> <span class="nx">quantity</span><span class="p">,</span> <span class="nx">color</span><span class="p">,</span> <span class="nx">size</span><span class="p">}),</span> <span class="nx">history</span><span class="p">(</span><span class="dl">"</span><span class="s2">/cart</span><span class="dl">"</span><span class="p">));</span> <span class="c1">//o dispatch para o redux acontece aqui, logo apos a linha ter sido adicionada ao banco de dados </span>
+    <span class="p">}).</span><span class="k">catch</span><span class="p">((</span><span class="nx">err</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">this error </span><span class="dl">"</span><span class="o">+</span> <span class="nx">err</span><span class="p">)</span>
+    <span class="p">})</span> 
+
+<span class="p">}</span>
+
+<span class="o">&lt;</span><span class="nx">AmountContainer</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="nx">Remove</span> <span class="nx">cursor</span><span class="o">=</span><span class="dl">"</span><span class="s2">pointer</span><span class="dl">"</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{()</span><span class="o">=&gt;</span><span class="nx">handleQuantity</span><span class="p">(</span><span class="dl">"</span><span class="s2">dec</span><span class="dl">"</span><span class="p">)}</span><span class="sr">/</span><span class="err">&gt;
+</span>    <span class="o">&lt;</span><span class="nx">Amount</span><span class="o">&gt;</span><span class="p">{</span><span class="nx">quantity</span><span class="p">}</span><span class="o">&lt;</span><span class="sr">/Amount</span><span class="err">&gt;
+</span>    <span class="o">&lt;</span><span class="nx">Add</span> <span class="nx">cursor</span><span class="o">=</span><span class="dl">"</span><span class="s2">pointer</span><span class="dl">"</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{()</span><span class="o">=&gt;</span><span class="nx">handleQuantity</span><span class="p">(</span><span class="dl">"</span><span class="s2">inc</span><span class="dl">"</span><span class="p">)}</span><span class="sr">/</span><span class="err">&gt;
+</span><span class="o">&lt;</span><span class="sr">/AmountContainer</span><span class="err">&gt;
+</span>
+</code></pre></div></div>
+
+<p>A página cartRedux, abaixo:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span><span class="nx">createSlice</span><span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@reduxjs/toolkit</span><span class="dl">"</span> <span class="c1">//utilizando a lib toolkit para criar o slice</span>
+<span class="k">import</span> <span class="nx">storage</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">redux-persist/lib/storage</span><span class="dl">'</span>
+
+<span class="kd">const</span> <span class="nx">cartSlice</span> <span class="o">=</span> <span class="nx">createSlice</span><span class="p">({</span> <span class="c1">//minhas variaveis de estado no meu slice</span>
+    <span class="na">name</span><span class="p">:</span><span class="dl">"</span><span class="s2">cart</span><span class="dl">"</span><span class="p">,</span>
+    <span class="na">initialState</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">products</span><span class="p">:[],</span>
+        <span class="na">quantity</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+        <span class="na">total</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="na">reducers</span><span class="p">:{</span> <span class="c1">//eis os meus reducers, quando adicionar, ou remover</span>
+        <span class="na">addProduct</span><span class="p">:(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span><span class="o">=&gt;</span> <span class="p">{</span>
+            <span class="nx">state</span><span class="p">.</span><span class="nx">quantity</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="nx">state</span><span class="p">.</span><span class="nx">products</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">payload</span><span class="p">)</span>
+            <span class="nx">state</span><span class="p">.</span><span class="nx">total</span> <span class="o">+=</span> <span class="nx">action</span><span class="p">.</span><span class="nx">payload</span><span class="p">.</span><span class="nx">price</span> <span class="o">*</span> <span class="nx">action</span><span class="p">.</span><span class="nx">payload</span><span class="p">.</span><span class="nx">quantity</span>
+        <span class="p">},</span>
+        <span class="na">resetSkill</span><span class="p">:(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="c1">//esta função eu criei para limpar o carrinho</span>
+            <span class="nx">storage</span><span class="p">.</span><span class="nx">removeItem</span><span class="p">(</span><span class="dl">'</span><span class="s1">root</span><span class="dl">'</span><span class="p">)</span> <span class="c1">//removendo o persist para limpar de verdade o carrinho</span>
+            <span class="nx">state</span><span class="p">.</span><span class="nx">quantity</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="nx">state</span><span class="p">.</span><span class="nx">products</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="nx">state</span><span class="p">.</span><span class="nx">total</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="p">},</span>
+        <span class="na">removeProduct</span><span class="p">:</span> <span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="c1">//remove o produto clicado, confesso que essa função me tomou tempo</span>
+            <span class="kd">const</span> <span class="p">{</span><span class="nx">product</span><span class="p">}</span> <span class="o">=</span> <span class="nx">action</span><span class="p">.</span><span class="nx">payload</span>
+            <span class="kd">let</span> <span class="nx">lexval</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">state</span><span class="p">.</span><span class="nx">quantity</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span><span class="p">(</span><span class="nx">product</span><span class="p">.</span><span class="nx">_idCart</span> <span class="o">===</span> <span class="nx">state</span><span class="p">.</span><span class="nx">products</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">_idCart</span><span class="p">){</span>
+                    <span class="nx">lexval</span> <span class="o">=</span> <span class="nx">i</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="kd">let</span> <span class="nx">decrement</span> <span class="o">=</span> <span class="nx">product</span><span class="p">.</span><span class="nx">price</span> <span class="o">*</span> <span class="nx">product</span><span class="p">.</span><span class="nx">quantity</span>
+            <span class="nx">state</span><span class="p">.</span><span class="nx">products</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">lexval</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="nx">state</span><span class="p">.</span><span class="nx">products</span> <span class="o">=</span> <span class="p">[...</span><span class="nx">state</span><span class="p">.</span><span class="nx">products</span><span class="p">]</span>
+            <span class="nx">state</span><span class="p">.</span><span class="nx">quantity</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">state</span><span class="p">.</span><span class="nx">quantity</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="nx">state</span><span class="p">.</span><span class="nx">quantity</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="nx">state</span><span class="p">.</span><span class="nx">total</span> <span class="o">-=</span> <span class="nx">decrement</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">state</span><span class="p">.</span><span class="nx">total</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="nx">state</span><span class="p">.</span><span class="nx">total</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+<span class="p">});</span>
+
+<span class="k">export</span> <span class="kd">const</span> <span class="p">{</span> <span class="nx">addProduct</span><span class="p">,</span> <span class="nx">resetSkill</span><span class="p">,</span> <span class="nx">removeProduct</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">cartSlice</span><span class="p">.</span><span class="nx">actions</span><span class="p">;</span> <span class="c1">//exportando para adicionar na Product.jsx</span>
+<span class="k">export</span> <span class="k">default</span> <span class="nx">cartSlice</span><span class="p">.</span><span class="nx">reducer</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Entretanto, para que essas funções funcionem, é fundamental a criação de um <code class="language-plaintext highlighter-rouge">store</code>, onde o persistor vai ser iniciado, como mostra o fonte abaixo:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">configureStore</span><span class="p">,</span> <span class="nx">combineReducers</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@reduxjs/toolkit</span><span class="dl">"</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">cartReducer</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">./cartRedux</span><span class="dl">"</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">userReducer</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">./userRedux</span><span class="dl">"</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span>
+    <span class="nx">persistStore</span><span class="p">,</span>
+    <span class="nx">persistReducer</span><span class="p">,</span>
+    <span class="nx">FLUSH</span><span class="p">,</span>
+    <span class="nx">REHYDRATE</span><span class="p">,</span>
+    <span class="nx">PAUSE</span><span class="p">,</span>
+    <span class="nx">PERSIST</span><span class="p">,</span>
+    <span class="nx">PURGE</span><span class="p">,</span>
+    <span class="nx">REGISTER</span><span class="p">,</span>
+<span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">redux-persist</span><span class="dl">'</span><span class="p">;</span> <span class="c1">//funções nativas do persist</span>
+<span class="k">import</span> <span class="nx">storage</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">redux-persist/lib/storage</span><span class="dl">'</span><span class="p">;</span> <span class="c1">//o storage deve ser iniciado para acessar a raiz em casos especificos, por exemplo: limpar carrinho.</span>
+
+<span class="kd">const</span> <span class="nx">persistConfig</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">key</span><span class="p">:</span> <span class="dl">'</span><span class="s1">root</span><span class="dl">'</span><span class="p">,</span> <span class="c1">//variavel raiz que acessei anteriormente no cartRedux</span>
+    <span class="na">version</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nx">storage</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="kd">const</span> <span class="nx">rootReducer</span> <span class="o">=</span> <span class="nx">combineReducers</span><span class="p">({</span> <span class="na">user</span><span class="p">:</span> <span class="nx">userReducer</span><span class="p">,</span> <span class="na">cart</span><span class="p">:</span> <span class="nx">cartReducer</span> <span class="p">});</span> <span class="c1">//como foi iniciado o cart e o user é fundamental que o combineReducers aconteça, outra função nativa que achei legal</span>
+<span class="kd">const</span> <span class="nx">persistedReducer</span> <span class="o">=</span> <span class="nx">persistReducer</span><span class="p">(</span><span class="nx">persistConfig</span><span class="p">,</span> <span class="nx">rootReducer</span><span class="p">);</span> <span class="c1">//subindo o persist com as configs </span>
+
+<span class="k">export</span> <span class="kd">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">configureStore</span><span class="p">({</span> <span class="c1">// o store que sera importado na main, neste caso index.js</span>
+    <span class="na">reducer</span><span class="p">:</span> <span class="nx">persistedReducer</span><span class="p">,</span> <span class="c1">//definindo os reducers</span>
+    <span class="na">middleware</span><span class="p">:(</span><span class="nx">getDefaultMiddleware</span><span class="p">)</span> <span class="o">=&gt;</span>
+        <span class="nx">getDefaultMiddleware</span><span class="p">({</span>
+            <span class="na">serializableCheck</span><span class="p">:</span> <span class="p">{</span>
+                <span class="na">ignoreActions</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="nx">FLUSH</span><span class="p">,</span> 
+                    <span class="nx">REHYDRATE</span><span class="p">,</span> 
+                    <span class="nx">PAUSE</span><span class="p">,</span> 
+                    <span class="nx">PERSIST</span><span class="p">,</span> 
+                    <span class="nx">PURGE</span><span class="p">,</span> 
+                    <span class="nx">REGISTER</span>
+                <span class="p">],</span> <span class="c1">//ignorando as funções nativas</span>
+            <span class="p">},</span>
+        <span class="p">}),</span>
+<span class="p">});</span>
+
+<span class="k">export</span> <span class="kd">let</span> <span class="nx">persistor</span> <span class="o">=</span> <span class="nx">persistStore</span><span class="p">(</span><span class="nx">store</span><span class="p">);</span> <span class="c1">//exportando o persistor</span>
+</code></pre></div></div>
+
+<p>E finalmente, utilizando esse <code class="language-plaintext highlighter-rouge">store</code> na nossa index page e já podemos acessar essas funções em toda e qualquer parte do código, o que eu considerei uma vantagem imensa.</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">React</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react</span><span class="dl">'</span>
+<span class="k">import</span> <span class="nx">ReactDOM</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react-dom/client</span><span class="dl">'</span>
+<span class="k">import</span> <span class="nx">App</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./App</span><span class="dl">'</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">Provider</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">react-redux</span><span class="dl">"</span> <span class="c1">//provider que passa a variavel store dentro</span>
+<span class="k">import</span> <span class="p">{</span><span class="nx">store</span><span class="p">,</span> <span class="nx">persistor</span><span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./redux/store</span><span class="dl">'</span> <span class="c1">//incluindo a store e o persistor</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">PersistGate</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">redux-persist/integration/react</span><span class="dl">'</span> <span class="c1">//PersistorGate que passa o persistor dentro</span>
+
+<span class="kd">const</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">createRoot</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">root</span><span class="dl">'</span><span class="p">));</span>
+
+<span class="kd">const</span> <span class="nx">AppView</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">(</span>
+    <span class="o">&lt;</span><span class="nx">Provider</span> <span class="nx">store</span><span class="o">=</span><span class="p">{</span><span class="nx">store</span><span class="p">}</span><span class="o">&gt;</span>  
+        <span class="o">&lt;</span><span class="nx">PersistGate</span> <span class="nx">loading</span><span class="o">=</span><span class="p">{</span><span class="kc">null</span><span class="p">}</span> <span class="nx">persistor</span><span class="o">=</span><span class="p">{</span><span class="nx">persistor</span><span class="p">}</span><span class="o">&gt;</span>
+            <span class="o">&lt;</span><span class="nx">App</span> <span class="o">/&gt;</span> 
+        <span class="o">&lt;</span><span class="sr">/PersistGate</span><span class="err">&gt;
+</span>    <span class="o">&lt;</span><span class="sr">/Provider</span><span class="err">&gt;
+</span><span class="p">);</span>
+
+<span class="nx">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">root</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">AppView</span> <span class="o">/&gt;</span><span class="p">);</span>
+<span class="p">},</span> <span class="mi">2500</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>No projeto para gestão do site, implementei para além das funcionalidades convensionais (população de dados no banco, exclusão de dados e atualizações). Nesta etapa, busquei dados como, função de crescimento (novos clientes) no último ano (um exemplo: jan: 4 clientes; fev: 10 clientes… dez: 20 clientes); porcertagens de ganhos ou perdas dos últimos 2 meses, a média das vendas dos últimos 3 meses e o lucro acumulado do item por mês (esta última na página do determinado produto). Em razão de já ter incluído bastante código nesta publicação, abaixo algumas imagens dos resultados para cada uma dessas etapas ilicitadas acima.</p>
+
+<ul>
+  <li>Sales representa o crescimento das vendas no último mês</li>
+  <li>Last month representa o crescimento das vendas no mês anterior em relação ao anterior dele</li>
+  <li>Mean representa a média das vendas nos últimos três meses</li>
+</ul>
+
+<p>Embaixo dos widgets o gráfico que representa o crescimento dos usuários durante uma linha do tempo de até 12 meses.</p>
+
+<p><img src="https://firebasestorage.googleapis.com/v0/b/ecommerce-shop-82750.appspot.com/o/Screenshot%202022-09-03%20at%2015-36-07%20Admin%20App.png?alt=media&amp;token=a8ad6ffc-8176-4d97-b260-879c3ed763db" /></p>
+
+<p>Neste exemplo, o gráfico apresenta o valor acumulado nos 3 meses qual foi comprado o item, sendo 300 em julho, 900 em agosto e 600 em setembro, ao aprixomar o cursor até o ponto no gráfico, uma shadowbox com todas estas informações é lançada.</p>
+
+<p><img src="https://firebasestorage.googleapis.com/v0/b/ecommerce-shop-82750.appspot.com/o/Screenshot%202022-09-03%20at%2015-44-04%20Admin%20App.png?alt=media&amp;token=4e4928d7-6358-44ac-9dd5-529054fec3c8" /></p>
+
+<p>Enfim, para complementar a publicação, uma animação das páginas mais expressivas do site, optei por algo mais minimalista e baseando-me em um projeto do Youtube, qual referêncio no Github.</p>
+
+<p><img src="https://firebasestorage.googleapis.com/v0/b/ecommerce-shop-82750.appspot.com/o/ok3.gif?alt=media&amp;token=10431aa3-0958-4358-b717-7eea4e2511ee" /></p>
+
+<p>O fonte deste projeto pode estar sendo acessado neste <a href="https://github.com/jardeleko/ecommerce">repositório</a>.</p>
+
+<p><br /></p>
+
+:ET

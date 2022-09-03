@@ -1,0 +1,82 @@
+I"�1<p>Acredito que todos os desenvolvedores passam pelo momento Ecommerce (aprendizagem ou mercado), justamente pela gama de serviços hospedados neste segmento atualmente, o que oferece praticidade aos adeptos (de liverys) e consequentemente gera empregos aos entregadores, neste projeto, busquei fazer algo funcional que ampliasse meu conhecimento com components do <code class="language-plaintext highlighter-rouge">React</code>, sendo assim, foquei na utilização do <code class="language-plaintext highlighter-rouge">styled components</code> e alguns <code class="language-plaintext highlighter-rouge">Hooks</code>, além do contato com o <code class="language-plaintext highlighter-rouge">Redux</code> e <code class="language-plaintext highlighter-rouge">Redux Persist</code>, razões: tokens persistentes para o carrinho de compras… O resultado realmente me surpreendeu, não costumo implementar em full stack e concluir praticamente todas as etapas de construção, até em razão da demanda x tempo, entretanto este projeto me entusiasmou a este ponto. Inclusive, também foi implementado uma página adminastradora ao manager do site, que também inclui uma análises (analytics) de vendas em relação aos meses anteriores.</p>
+
+<p>As etapas identidades foram selecionadas na seguinte lista:</p>
+<ul>
+  <li>Método checkout com o serviço <code class="language-plaintext highlighter-rouge">stripe</code>;</li>
+  <li>o carrinho de compras utilizando <code class="language-plaintext highlighter-rouge">redux toolkit</code> e <code class="language-plaintext highlighter-rouge">redux persist</code>;</li>
+  <li>Págine de gestão com querys específicas;</li>
+</ul>
+
+<p>Em todo ecommerce é necessário um método de pagamento, é o que caracteriza esse serviço. Pensando assim, adotei o <a href="https://stripe.com">Stripe</a> como serviço, acreditando ser um dos mais seguros e com custos interessantes. Para que essa ferramenta funcione corretamente, criei uma conta na página, o que garantiu as minhas chaves (pública e secreta), da mesma forma o stripe fornece um código para integração do método checkout. Logo, meu código ficou da seguinte forma:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">StripeCheckout</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react-stripe-checkout</span><span class="dl">'</span>
+<span class="kd">const</span> <span class="nx">KEY</span> <span class="o">=</span> <span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">REACT_APP_STRIPE</span> <span class="c1">//public key</span>
+<span class="kd">const</span> <span class="p">[</span><span class="nx">stripeToken</span><span class="p">,</span> <span class="nx">setStripeToken</span><span class="p">]</span> <span class="o">=</span> <span class="nx">useState</span><span class="p">(</span><span class="kc">null</span><span class="p">)</span>
+
+<span class="kd">const</span> <span class="nx">onToken</span> <span class="o">=</span> <span class="p">(</span><span class="nx">token</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="c1">//pegando o token gerado e atribuindo a variavel  </span>
+    <span class="nx">setStripeToken</span><span class="p">(</span><span class="nx">token</span><span class="p">);</span> 
+<span class="p">}</span>
+
+<span class="nx">useEffect</span><span class="p">(()</span><span class="o">=&gt;</span> <span class="p">{</span> <span class="c1">// assim que o token foi gerando </span>
+    <span class="kd">const</span> <span class="nx">makeRequest</span> <span class="o">=</span> <span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="c1">//função de envio ao banco de dados</span>
+    <span class="kd">const</span> <span class="nx">localPrice</span> <span class="o">=</span> <span class="nx">cart</span><span class="p">.</span><span class="nx">total</span> <span class="o">*</span> <span class="mi">100</span><span class="p">;</span>
+    <span class="k">await</span> <span class="nx">publicRequest</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="dl">"</span><span class="s2">/checkout/payment</span><span class="dl">"</span><span class="p">,</span> <span class="p">{</span> 
+        <span class="na">tokenId</span><span class="p">:</span> <span class="nx">stripeToken</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> 
+        <span class="na">amount</span><span class="p">:</span> <span class="nx">localPrice</span><span class="p">,</span>
+    <span class="p">}).</span><span class="nx">then</span><span class="p">((</span><span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">history</span><span class="p">(</span><span class="dl">"</span><span class="s2">/success</span><span class="dl">"</span><span class="p">,</span> <span class="p">{</span><span class="na">state</span><span class="p">:{</span><span class="na">data</span><span class="p">:</span><span class="nx">res</span><span class="p">.</span><span class="nx">data</span><span class="p">}})</span>  <span class="c1">//se tudo deu certo com a compra, redireciona o cliente</span>
+        <span class="c1">//console.log(res.data)  </span>
+    <span class="p">}).</span><span class="k">catch</span><span class="p">((</span><span class="nx">err</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">history</span><span class="p">(</span><span class="dl">"</span><span class="s2">/failed</span><span class="dl">"</span><span class="p">,</span> <span class="p">{</span><span class="na">state</span><span class="p">:{</span><span class="na">data</span><span class="p">:</span><span class="nx">err</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">}})</span>  <span class="c1">//se algo deu errado com cartão, imprime o mal sucedido</span>
+    <span class="p">})</span>
+<span class="p">}</span>
+<span class="nx">stripeToken</span> <span class="o">&amp;&amp;</span> <span class="nx">makeRequest</span><span class="p">();</span> <span class="c1">//se o token existe chama a função de envio</span>
+<span class="p">},</span> <span class="p">[</span><span class="nx">stripeToken</span><span class="p">,</span> <span class="nx">cart</span><span class="p">.</span><span class="nx">total</span><span class="p">,</span> <span class="nx">history</span><span class="p">])</span>
+
+
+<span class="k">return</span> <span class="p">(</span> <span class="c1">// importando o método no meu front </span>
+    <span class="o">&lt;</span><span class="nx">StripeCheckout</span>
+        <span class="nx">name</span><span class="o">=</span><span class="dl">"</span><span class="s2">Santa Colina</span><span class="dl">"</span> <span class="c1">//nome site</span>
+        <span class="nx">image</span><span class="o">=</span><span class="dl">"</span><span class="s2">https://images.vexels.com/media/users/3/200093/isolated/preview/596f0d8cb733b17268752d044976f102-icone-de-sacola-de-compras.png</span><span class="dl">"</span> <span class="c1">//avtar</span>
+        <span class="nx">billingAddress</span>
+        <span class="nx">shippingAddress</span>
+        <span class="nx">description</span><span class="o">=</span><span class="p">{</span><span class="s2">`TOTAL IS $ </span><span class="p">${</span><span class="nx">cart</span><span class="p">.</span><span class="nx">total</span><span class="p">}</span><span class="s2">`</span><span class="p">}</span> 
+        <span class="nx">amount</span><span class="o">=</span><span class="p">{</span><span class="nx">cart</span><span class="p">.</span><span class="nx">total</span><span class="o">*</span><span class="mi">100</span><span class="p">}</span>
+        <span class="nx">token</span><span class="o">=</span><span class="p">{</span><span class="nx">onToken</span><span class="p">}</span> <span class="c1">//chamando a função onToken</span>
+        <span class="nx">stripeKey</span><span class="o">=</span><span class="p">{</span><span class="nx">KEY</span><span class="p">}</span> <span class="c1">//utilizando a minha public</span>
+        <span class="o">&gt;</span>                       
+        <span class="o">&lt;</span><span class="nx">Button</span><span class="o">&gt;</span><span class="nx">BUY</span> <span class="nx">NOW</span><span class="o">&lt;</span><span class="sr">/Button</span><span class="err">&gt;
+</span>    <span class="o">&lt;</span><span class="sr">/StripeCheckout</span><span class="err">&gt;
+</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>De outra forma, no backend, a implementação da rota payment ficou assim:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">dotenv</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">dotenv</span><span class="dl">'</span><span class="p">).</span><span class="nx">config</span><span class="p">()</span>
+<span class="kd">const</span> <span class="nx">router</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">express</span><span class="dl">'</span><span class="p">).</span><span class="nx">Router</span><span class="p">()</span>
+<span class="kd">const</span> <span class="nx">stripe</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">stripe</span><span class="dl">'</span><span class="p">)(</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">STRIPE_KEY</span><span class="p">)</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="dl">"</span><span class="s2">/payment</span><span class="dl">"</span><span class="p">,</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<span class="nx">stripe</span><span class="p">.</span><span class="nx">charges</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+    <span class="na">source</span><span class="p">:</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">tokenId</span><span class="p">,</span>
+    <span class="na">amount</span><span class="p">:</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">amount</span><span class="p">,</span>
+    <span class="na">currency</span><span class="p">:</span> <span class="dl">"</span><span class="s2">brl</span><span class="dl">"</span><span class="p">,</span>
+    <span class="p">}).</span><span class="nx">then</span><span class="p">((</span><span class="nx">stripeRes</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mi">200</span><span class="p">).</span><span class="nx">json</span><span class="p">(</span><span class="nx">stripeRes</span><span class="p">)</span>
+
+    <span class="p">}).</span><span class="k">catch</span><span class="p">((</span><span class="nx">stripeError</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">stripeError</span><span class="p">)</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mi">500</span><span class="p">).</span><span class="nx">json</span><span class="p">(</span><span class="nx">stripeError</span><span class="p">)</span>
+
+    <span class="p">})</span>
+
+<span class="p">})</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">router</span>
+</code></pre></div></div>
+
+<p>O fonte deste projeto pode estar sendo acessado neste <a href="https://github.com/jardeleko/ecommerce">repositório</a>.</p>
+
+<p><br /></p>
+
+:ET

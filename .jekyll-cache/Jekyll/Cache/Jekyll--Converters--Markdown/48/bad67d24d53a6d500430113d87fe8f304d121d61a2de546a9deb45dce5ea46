@@ -1,0 +1,14 @@
+I"<p>Acredito que todos os desenvolvedores passam pelo momento Ecommerce (aprendizagem ou mercado), justamente pela gama de serviços hospedados neste segmento atualmente, o que oferece praticidade aos adeptos (de liverys) e consequentemente gera empregos aos entregadores, neste projeto, busquei fazer algo funcional que ampliasse meu conhecimento com components do <code class="language-plaintext highlighter-rouge">React</code>, sendo assim, foquei na utilização do <code class="language-plaintext highlighter-rouge">styled components</code> e alguns <code class="language-plaintext highlighter-rouge">Hooks</code>, além do contato com o <code class="language-plaintext highlighter-rouge">Redux</code> e <code class="language-plaintext highlighter-rouge">Redux Persist</code>, razões: tokens persistentes para o carrinho de compras… O resultado realmente me surpreendeu, não costumo implementar em full stack e concluir praticamente todas as etapas de construção, até em razão da demanda x tempo, entretanto este projeto me entusiasmou a este ponto. Inclusive, também foi implementado uma página adminastradora ao manager do site, que também inclui uma análises (analytics) de vendas em relação aos meses anteriores.</p>
+
+<p>As etapas identidades foram selecionadas na seguinte lista:</p>
+<ul>
+  <li>Método checkout com o serviço <code class="language-plaintext highlighter-rouge">stripe</code>;</li>
+  <li>o carrinho de compras utilizando <code class="language-plaintext highlighter-rouge">redux toolkit</code> e <code class="language-plaintext highlighter-rouge">redux persist</code>;</li>
+  <li>Págine de gestão com querys específicas;</li>
+</ul>
+
+<p>Para ler os resultados desta pesquisa, acesse <a href="https://github.com/jardeleko/2022/tree/main/TCCII">TCCII</a> .</p>
+
+<p><br /></p>
+
+:ET
