@@ -1,8 +1,0 @@
-I"�<p>Evento simples de população de um banco de dados <code class="language-plaintext highlighter-rouge">Postgres</code>, cenário foi criado para inclusão da tabela Tuss em uma clinica médica, o desenvolvimento deu-se em <code class="language-plaintext highlighter-rouge">node js</code> por razão de já ter um escopo do projeto predefinido em BD2 durante a graduação. E embora não seja algo absurdamente complexo para outras linguagens, em node confesso ter certa simplicidade, inclusive, considera-se para um bom desempenho a adoção de linguaguens como <code class="language-plaintext highlighter-rouge">C</code> ou <code class="language-plaintext highlighter-rouge">Python</code> para estes construções.</p>
-
-<p>O caso consistiu em diversas etapas divertidas, como por exemplo a elaboração de um evento local antes do lançamento na Cloud, unicamente para garantir a integridade. além da sanitização do lista que pode ser encontrada em <a href="https://github.com/charlesfgarcia/tabelas-ans">Tuss</a>.</p>
-
-<p>Enfim, o código também serviu e serve para conectar e fazer outras buscas em serviços hospedados, bem por isso decidi publicar no portfólio, buscando reforçar</p>
-
-<!-- [Stripe]: https://stripe.com -->
-:ET
