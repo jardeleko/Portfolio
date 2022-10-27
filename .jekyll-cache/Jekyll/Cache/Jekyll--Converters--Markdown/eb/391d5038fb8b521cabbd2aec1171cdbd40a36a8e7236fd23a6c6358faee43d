@@ -1,0 +1,8 @@
+I"1<p>Simples de população de um banco de dados <code class="language-plaintext highlighter-rouge">Postgres</code>, cenário foi criado para inclusão da tabela Tuss em uma clinica médica, o desenvolvimento deu-se em <code class="language-plaintext highlighter-rouge">node js</code> por consequência de já ter um escopo do projeto predefinido em BD2 durante a graduação. Embora não seja algo absurdamente complexo para outras linguagens, em node confesso ter certa simplicidade, inclusive, indica-se para um bom desempenho na construção deste serviço a adoção de linguaguens como <code class="language-plaintext highlighter-rouge">C</code> ou <code class="language-plaintext highlighter-rouge">Python</code>.</p>
+
+<p>O caso consistiu em diversas etapas divertidas, como por exemplo a elaboração de um evento local, antes do lançamento na <code class="language-plaintext highlighter-rouge">Cloud</code>, unicamente para garantir a integridade. Além da sanitização do lista que pode ser encontrada em <a href="https://github.com/charlesfgarcia/tabelas-ans">Tuss</a>.</p>
+
+<p>Enfim, o código também serviu e/ou serve para demais consultas em serviços hospedados, e por isso, decidi publicar no portfólio buscando reforçar minha satisfação com este caso específico.</p>
+
+<!-- [Stripe]: https://stripe.com -->
+:ET

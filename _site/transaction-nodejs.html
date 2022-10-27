@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/portfolio/assets/main.css">
+    <link rel="icon" href=/portfolio/assets/sbg.jpg style="border-radius: 40%;">
+    <title>Jardel Osorio Duarte</title>
+  </head><body>
+    <div class="container"><header class="masthead">
+  <h1 class="masthead-title">
+    <a href="/portfolio/">Jardel Osorio Duarte<span style="font-size:20px; color: rgb(100, 100, 100);"> Portfólio</span></a>
+  </h1>  
+  <nav class="masthead-nav">
+    
+      <a href="/portfolio/404.html"></a>
+    
+      <a href="/portfolio/about/">Biografia</a>
+    
+      <a href="/portfolio/curriculum">Currículo Lattes</a>
+    
+      <a href="/portfolio/"></a>
+    
+      <a href="/portfolio/tools">Ferramentas</a>
+    
+      <a href="/portfolio/assets/main.css"></a>
+    
+      <a href="/portfolio/feed.xml"></a>
+    
+  </nav>
+</header><article class="content post">
+  <h1 class="post-title">Transactions com Node js e Postgresql</h1>
+  <div class="post-date">
+    <time>27 Oct 2022</time>
+  </div>
+  <p>Simples de população de um banco de dados <code class="language-plaintext highlighter-rouge">Postgres</code>, cenário foi criado para inclusão da tabela Tuss em uma clinica médica, o desenvolvimento deu-se em <code class="language-plaintext highlighter-rouge">node js</code> por consequência de já ter um escopo do projeto predefinido em BD2 durante a graduação. Embora não seja algo absurdamente complexo para outras linguagens, em node confesso ter certa simplicidade, inclusive, indica-se para um bom desempenho na construção deste serviço a adoção de linguaguens como <code class="language-plaintext highlighter-rouge">C</code> ou <code class="language-plaintext highlighter-rouge">Python</code>.</p>
+
+<p>O caso consistiu em diversas etapas divertidas, como por exemplo a elaboração de um evento local, antes do lançamento na <code class="language-plaintext highlighter-rouge">Cloud</code>, unicamente para garantir a integridade. Além da sanitização do lista que pode ser encontrada em <a href="https://github.com/charlesfgarcia/tabelas-ans">Tuss</a>.</p>
+
+<p>Enfim, o código também serviu e/ou serve para demais consultas em serviços hospedados, e por isso, decidi publicar no portfólio buscando reforçar minha satisfação com este caso específico.</p>
+
+<p>Abaixo as poucas linhas de códigos que me satisfizeram como entusiasta de <code class="language-plaintext highlighter-rouge">SGBDs</code>, em principal Postgresql, adotado em grande parte do curso, tks <code class="language-plaintext highlighter-rouge">UFFS</code>:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">dotenv</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">dotenv</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">./files.json</span><span class="dl">'</span><span class="p">);</span>
+<span class="nx">dotenv</span><span class="p">.</span><span class="nx">config</span><span class="p">();</span>
+
+<span class="kd">var</span> <span class="nx">tmp</span><span class="p">;</span> 
+<span class="kd">let</span> <span class="nx">conn</span><span class="p">;</span>
+<span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+<span class="k">async</span> <span class="kd">function</span> <span class="nx">runTransaction</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">connect</span><span class="p">();</span>
+    <span class="k">await</span> <span class="nx">createTable</span><span class="p">();</span>
+    <span class="k">await</span> <span class="nx">execute</span><span class="p">();</span>
+    <span class="k">await</span> <span class="nx">showRows</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="c1">//Connect to database with postgres user and pass</span>
+<span class="kd">function</span> <span class="nx">connect</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">today</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">();</span>
+  <span class="kd">const</span> <span class="p">{</span> <span class="nx">Client</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">pg</span><span class="dl">'</span><span class="p">);</span>
+  <span class="nx">conn</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Client</span><span class="p">({</span>
+    <span class="na">host</span><span class="p">:</span> <span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">HOST_HOMEUP</span><span class="p">,</span>
+    <span class="na">database</span><span class="p">:</span> <span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">DB_HOMEUP</span><span class="p">,</span>
+    <span class="na">user</span><span class="p">:</span> <span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">USER_HOMEUP</span><span class="p">,</span>
+    <span class="na">password</span><span class="p">:</span> <span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">PASSWD_HOMEUP</span><span class="p">,</span>
+    <span class="c1">// port: 5432,</span>
+  <span class="p">});</span>
+  <span class="nx">conn</span><span class="p">.</span><span class="nx">connect</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="k">async</span> <span class="kd">function</span> <span class="nx">createTable</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">await</span> <span class="nx">conn</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s2">`
+      drop table if exists tuss_tables;
+      create table if not exists tuss(
+        code integer,
+        proccess varchar,
+        primary key (code)
+      )
+  `</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Table created in postgresql</span><span class="dl">'</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">async</span> <span class="kd">function</span> <span class="nx">execute</span><span class="p">(){</span>
+  <span class="nx">today</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">();</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">values</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">s</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">({</span>
+      <span class="na">code</span><span class="p">:</span> <span class="nx">s</span><span class="p">.</span><span class="nx">codigo</span><span class="p">,</span>
+      <span class="na">proccess</span><span class="p">:</span> <span class="nx">s</span><span class="p">.</span><span class="nx">procedimento</span><span class="p">,</span>
+    <span class="p">}))</span>
+
+    <span class="k">await</span> <span class="nx">conn</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="dl">"</span><span class="s2">BEGIN</span><span class="dl">"</span><span class="p">)</span>
+    <span class="k">while</span> <span class="p">(</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">values</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">try</span> <span class="p">{</span>
+      <span class="c1">//Declare string for sql statement</span>
+        <span class="kd">const</span> <span class="nx">sqlString</span> <span class="o">=</span> <span class="s2">`INSERT INTO tuss_tables (code, proccess) VALUES ($1, $2);`</span><span class="p">;</span>
+          <span class="c1">//Pass sql string to the query method</span>
+        <span class="kd">let</span> <span class="nx">aux</span> <span class="o">=</span> <span class="p">[</span><span class="nx">values</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">code</span><span class="p">,</span> <span class="nx">values</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">proccess</span><span class="p">]</span>
+        <span class="k">await</span> <span class="nx">conn</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="nx">sqlString</span><span class="p">,</span> <span class="nx">aux</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">client.query() SQL result:</span><span class="dl">"</span><span class="p">,</span> <span class="nx">result</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="se">\n</span><span class="s2">client.query():</span><span class="dl">"</span><span class="p">,</span> <span class="nx">err</span><span class="p">);</span>
+          <span class="c1">//Rollback before executing another transaction</span>
+          <span class="nx">conn</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="dl">"</span><span class="s2">ROLLBACK</span><span class="dl">"</span><span class="p">);</span>
+          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">Transaction ROLLBACK called</span><span class="dl">"</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+          <span class="nx">conn</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="dl">"</span><span class="s2">COMMIT</span><span class="dl">"</span><span class="p">);</span>
+          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">client.query() COMMIT row count:</span><span class="dl">"</span><span class="p">,</span> <span class="nx">result</span><span class="p">.</span><span class="nx">rowCount</span><span class="p">);</span>
+        <span class="p">}</span>
+      <span class="p">});</span>
+      <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">er</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">//Rollback before executing another transaction</span>
+        <span class="nx">conn</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="dl">"</span><span class="s2">ROLLBACK</span><span class="dl">"</span><span class="p">);</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">client.query():</span><span class="dl">"</span><span class="p">,</span> <span class="nx">er</span><span class="p">);</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">Transaction ROLLBACK called</span><span class="dl">"</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="nx">i</span><span class="o">++</span>
+    <span class="p">}</span>
+  <span class="p">}</span> <span class="k">finally</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">Tuss released</span><span class="dl">"</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">//Print all rows in console</span>
+<span class="k">async</span> <span class="kd">function</span> <span class="nx">showRows</span><span class="p">()</span> <span class="p">{</span>
+
+  <span class="kd">let</span> <span class="p">{</span> <span class="nx">rows</span> <span class="p">}</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">conn</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span>
+    <span class="s2">`SELECT * FROM tuss_tables;`</span>
+  <span class="p">);</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kd">const</span> <span class="nx">row</span> <span class="k">of</span> <span class="nx">rows</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">row</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="nx">tmp</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()</span> <span class="o">-</span> <span class="nx">today</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="se">\n</span><span class="s2">Was inserted </span><span class="dl">"</span> <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span> <span class="dl">"</span><span class="s2"> rows in </span><span class="dl">"</span> <span class="o">+</span> <span class="nx">tmp</span> <span class="o">+</span> <span class="dl">"</span><span class="s2"> ms(t)</span><span class="dl">"</span><span class="p">);</span>
+
+  <span class="c1">//Kill process in node, go back terminal</span>
+  <span class="nx">process</span><span class="p">.</span><span class="nx">exit</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="nx">runTransaction</span><span class="p">();</span>
+
+</code></pre></div></div>
+
+<p>O fonte deste projeto pode estar sendo acessado neste <a href="https://github.com/jardeleko/class-2020-extras/blob/main/BD2/TP_01/transaction_db.js">repositório</a>, entretanto, o caso de uso busca análisar o desempenho do próprio Postgres em relação a inserção de 100k tuplas.</p>
+
+<p><br /></p>
+
+<!-- [Stripe]: https://stripe.com -->
+
+</article>
+
+    </div><footer class="site-footer h-card">
+  <data class="u-url" href="/portfolio/"></data>
+
+  <div class="wrapper">
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Jardel Osorio Duarte</li><li><a class="u-email" href="mailto:jardelduarte594@gmail.com">jardelduarte594@gmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/jardeleko"><svg class="svg-icon"><use xlink:href="/portfolio/assets/minima-social-icons.svg#github"></use></svg> <span class="username">jardeleko</span></a></li><li><a href="https://www.linkedin.com/in/jardeleko"><svg class="svg-icon"><use xlink:href="/portfolio/assets/minima-social-icons.svg#linkedin"></use></svg> <span class="username">jardeleko</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Página destinada a expor alguns projetos e ferramentas qual já tenho certa familiaridade.  Inclúindo: curriculum lattes, publicações relacionadas a minha linha de pesquisa e áreas de interesse.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+</html>
