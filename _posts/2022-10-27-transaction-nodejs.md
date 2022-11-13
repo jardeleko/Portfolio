@@ -11,7 +11,7 @@ O caso consistiu em diversas etapas divertidas, como por exemplo, a elaboração
 
 Enfim, o código também serve para demais consultas em serviços hospedados, em razão, decidi publicar no portfólio buscando reforçar minha animação com este caso específico.
 
-Abaixo as poucas linhas de códigos que me satisfizeram como entusiasta de `SGBDs`, em principal `Postgresql`, adotado em grande parte do curso, tks `UFFS`:
+Abaixo, as poucas linhas de códigos que me satisfizeram como entusiasta de `SGBDs`, em principal `Postgresql`, adotado em grande parte do curso, tks `UFFS`:
 
 ~~~js
 const dotenv = require('dotenv');
