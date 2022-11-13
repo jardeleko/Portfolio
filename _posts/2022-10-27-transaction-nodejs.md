@@ -5,13 +5,13 @@ date:   2022-10-27 01:14:06 -0300
 categories: jekyll update
 ---
 
-Simples de população de um banco de dados `Postgres`, cenário foi criado para inclusão da tabela Tuss em uma clinica médica, o desenvolvimento deu-se em `node js` por consequência de já ter um escopo do projeto predefinido em BD2 durante a graduação. Embora não seja algo absurdamente complexo para outras linguagens, em node confesso ter certa simplicidade, inclusive, indica-se para um bom desempenho na construção deste serviço a adoção de linguaguens como `C` ou `Python`.  
+Simples população de um banco de dados `Postgres`, onde o cenário foi criado para inclusão da tabela Tuss em uma clínica médica, o desenvolvimento deu-se em `node js`, justamente por ter um escopo do projeto predefinido em BD2, disciplina qual cursei durante a graduação. Embora não seja algo absurdamente complexo em outras linguagens, em node, confesso ter certa simplicidade, inclusive, indica-se para um bom desempenho a adoção de linguaguens como `C` ou `Python`.  
 
-O caso consistiu em diversas etapas divertidas, como por exemplo a elaboração de um evento local, antes do lançamento na `Cloud`, unicamente para garantir a integridade. Além da sanitização do lista que pode ser encontrada em [Tuss].
+O caso consistiu em diversas etapas divertidas, como por exemplo, a elaboração de um evento local antes do lançamento na `Cloud`, unicamente para garantir a integridade. Além da sanitização do lista que pode ser encontrada em [Tuss].
 
-Enfim, o código também serviu e/ou serve para demais consultas em serviços hospedados, e por isso, decidi publicar no portfólio buscando reforçar minha satisfação com este caso específico.
+Enfim, o código também serve para demais consultas em serviços hospedados, em razão, decidi publicar no portfólio buscando reforçar minha animação com este caso específico.
 
-Abaixo as poucas linhas de códigos que me satisfizeram como entusiasta de `SGBDs`, em principal Postgresql, adotado em grande parte do curso, tks `UFFS`:
+Abaixo as poucas linhas de códigos que me satisfizeram como entusiasta de `SGBDs`, em principal `Postgresql`, adotado em grande parte do curso, tks `UFFS`:
 
 ~~~js
 const dotenv = require('dotenv');
