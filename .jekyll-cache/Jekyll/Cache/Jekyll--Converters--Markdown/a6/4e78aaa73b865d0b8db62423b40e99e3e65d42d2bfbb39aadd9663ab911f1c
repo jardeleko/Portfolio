@@ -1,42 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="/portfolio/assets/main.css">
-    <link rel="icon" href=/portfolio/assets/sbg.jpg style="border-radius: 40%;">
-    <title>Jardel Osorio Duarte</title>
-  </head><body>
-    <div class="container"><header class="masthead">
-  <h1 class="masthead-title">
-    <a href="/portfolio/">Jardel Osorio Duarte<span style="font-size:20px; color: rgb(100, 100, 100);"> Portfólio</span></a>
-  </h1>  
-  <nav class="masthead-nav">
-    
-      <a href="/portfolio/404.html"></a>
-    
-      <a href="/portfolio/about/">Biografia</a>
-    
-      <a href="/portfolio/curriculum">Currículo Lattes</a>
-    
-      <a href="/portfolio/"></a>
-    
-      <a href="/portfolio/tools">Ferramentas</a>
-    
-      <a href="/portfolio/assets/main.css"></a>
-    
-      <a href="/portfolio/feed.xml"></a>
-    
-  </nav>
-</header><article class="post">
-
-  <header class="post-header">
-    <h3 class="masthead-title">Ferramentas</h3>
-  </header>
-
-  <div class="post-content">
-    <p>Identificando algumas ferramentas e serviços na construção de projetos que ainda utilizo ou que tive gosto de ter tido contato, para isso, separei o conteúdo em quatro partes buscando organizar cada método.</p>
+I"�H<p>Identificando algumas ferramentas e serviços na construção de projetos que ainda utilizo ou que tive gosto de ter tido contato, para isso, separei o conteúdo em quatro partes buscando organizar cada método.</p>
 
 <ol>
   <li>Em primeiro, selecionei algumas linguagens que fazem parte da bagagem necessária para aprendizagem e elaboração dos projetos, houveram diversas outros que acabei tendo contato, entretanto, identifiquei algumas que realmente precisavam estar nesta seleção e justifiquei para o melhor entendimento.</li>
@@ -242,7 +204,7 @@
 <blockquote>
   <p><img src="https://cdn.iconscout.com/icon/free/png-256/sequelize-2-1175003.png" width="40" style="float:left;" /></p>
   <ul>
-    <li>O Sequelize foi o único ORM que tive contato, gosto bastante e sempre que posso utilizo a ferramenta, gosto das migrações com ele e também da quantidade de querys que facilitam as chamadas no banco de dados.</li>
+    <li>Permite a criação de todas as etapas da construção de linguagens de máquina, ou seja, como a máquina vai interpretar as entradas posteriormente, exemplos: LALR (Look-Ahead de decidibilidade canônica), SLRs (ações, sendo estas: state, left or right), etc. Auxilia na construção de compiladores.</li>
   </ul>
 </blockquote>
 
@@ -258,14 +220,7 @@
 </blockquote>
 
 <blockquote>
-  <p><img src="https://www.nesabamedia.com/wp-content/uploads/2022/04/DBeaver-Logo-1.png" width="40" style="float:left;" /></p>
-  <ul>
-    <li>Com o Dbeaver fiz testes de conexões e importação e exportação de dados massivos de um BD, aliás, o software é muito integro para estas funcionalidades.</li>
-  </ul>
-</blockquote>
-
-<blockquote>
-  <p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Google_Colaboratory_SVG_Logo.svg/800px-Google_Colaboratory_SVG_Logo.svg.png?20221103151432" width="40" style="float:left;" /></p>
+  <p><img src="https://colab.research.google.com/img/colab_favicon_256px.png" width="40" style="float:left;" /></p>
   <ul>
     <li>Esta plataforma foi muito útil na criação de notebooks e assim como o Jupyter, foi útil para aprendizagem de máquina, permitindo a criação de alguns robozitos, porém, o Colab, por ser um serviço leve e em nuvem acabei utilizando mais vezes.</li>
   </ul>
@@ -275,13 +230,6 @@
   <p><img src="https://seeklogo.com/images/G/google-cloud-logo-ADE788217F-seeklogo.com.png" width="40" style="float:left;" /></p>
   <ul>
     <li>O Google Cloud Platform foi um dos servidores que usei apenas para testes que surgiram em meio a graduação, ainda estou nos primeiros contatos mas pretendo me aprofundar mais na utilização dos recursos.</li>
-  </ul>
-</blockquote>
-
-<blockquote>
-  <p><img src="https://cdn2.downdetector.com/static/uploads/logo/aws-logo-icon-PNG-Transparent-Background_3.png" width="40" style="float:left;" /></p>
-  <ul>
-    <li>Juro que já contextei a AWS, mas é a pioneira e atualmente uma das minhas plataformas preferidas, quando preciso de uma VM ou serviços quaisquer em cloud, penso sempre na Amazon Web Services.</li>
   </ul>
 </blockquote>
 
@@ -314,13 +262,6 @@
 </blockquote>
 
 <blockquote>
-  <p><img src="https://user-images.githubusercontent.com/2575745/67964810-4d9a2980-fbd7-11e9-8cf7-661ded187ee6.png" width="40" style="float:left;" /></p>
-  <ul>
-    <li>Assim como o Postman, o Insomnia atende muito bem para depuração dos end-points. Sendo uma API simples e completa.</li>
-  </ul>
-</blockquote>
-
-<blockquote>
   <p><img src="https://res.cloudinary.com/practicaldev/image/fetch/s--lrfDQ0H1--/c_fill,f_auto,fl_progressive,h_320,q_auto,w_320/https://dev-to-uploads.s3.amazonaws.com/uploads/organization/profile_image/123/38b10714-65da-4f1d-88ae-e9b28c1d7a5e.png" width="40" style="float:left;" /></p>
   <ul>
     <li>utilizo o Heroku para deployar/buildar apps, entretanto, considerei utilizar somente para os back-end/api. A plataforma tem atendido perfeitamente todas as minhas necessidades atualmente.</li>
@@ -330,14 +271,7 @@
 <blockquote>
   <p><img src="https://seeklogo.com/images/N/netlify-logo-BD8F8A77E2-seeklogo.com.png" width="40" style="float:left;" /></p>
   <ul>
-    <li>Utilizei o Netlify para deploy front-end. Testei outras plataformas e realmente achei uma simplicidade em deployments com o Netlify, um exemplo é não ter que utilizar webpacks fora do projeto, como por exemplo inclusão do babel.</li>
-  </ul>
-</blockquote>
-
-<blockquote>
-  <p><img src="https://camo.githubusercontent.com/add2c9721e333f0043ac938f3dadbc26a282776e01b95b308fcaba5afaf74ae3/68747470733a2f2f6173736574732e76657263656c2e636f6d2f696d6167652f75706c6f61642f76313538383830353835382f7265706f7369746f726965732f76657263656c2f6c6f676f2e706e67" width="40" style="float:left;" /></p>
-  <ul>
-    <li>Utilizo o Vercel para deploy das aplicações com React, simples, intuitivo, ótimo de usar, atendeu muito bem em todas as vezes que precisei, utilizo e indico, melhor referência de versionamento em nuvem atualmente.</li>
+    <li>Utilizo/utilizei o Netlify para deploy front-end. Testei outras plataformas e realmente achei uma simplicidade em deployments com o Netlify, um exemplo é não ter que utilizar webpacks fora do projeto, como por exemplo inclusão do babel.</li>
   </ul>
 </blockquote>
 
@@ -361,31 +295,4 @@
     <li>O RPi é um dos dispositivos que mantenho executando boa parte do tempo, atualmente, o meu ta com OS Lakka para emular alguns consoles, ainda existem desafios para implementação na máquina, por razão deste possuir um hardware com certa capacidade, se comparado aos demais.</li>
   </ul>
 </blockquote>
-
-  </div>
-
-</article>
-
-    </div><footer class="site-footer h-card">
-  <data class="u-url" href="/portfolio/"></data>
-
-  <div class="wrapper">
-    <div class="footer-col-wrapper">
-      <div class="footer-col footer-col-1">
-        <ul class="contact-list">
-          <li class="p-name">Jardel Osorio Duarte</li><li><a class="u-email" href="mailto:jardelduarte594@gmail.com">jardelduarte594@gmail.com</a></li></ul>
-      </div>
-
-      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/jardeleko"><svg class="svg-icon"><use xlink:href="/portfolio/assets/minima-social-icons.svg#github"></use></svg> <span class="username">jardeleko</span></a></li><li><a href="https://www.linkedin.com/in/jardeleko"><svg class="svg-icon"><use xlink:href="/portfolio/assets/minima-social-icons.svg#linkedin"></use></svg> <span class="username">jardeleko</span></a></li></ul>
-</div>
-
-      <div class="footer-col footer-col-3">
-        <p>Página destinada a expor alguns projetos e ferramentas qual já tenho certa familiaridade.  Inclúindo: curriculum lattes, publicações relacionadas a minha linha de pesquisa e áreas de interesse.</p>
-      </div>
-    </div>
-
-  </div>
-
-</footer>
-</body>
-</html>
+:ET

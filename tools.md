@@ -98,6 +98,13 @@ Identificando algumas ferramentas e serviços na construção de projetos que ai
 > <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPHbSW4nVrNJbWL49Z8wZoILztaDf3IcEfwFNV0alvhib3lYAnj6cuS2nGFMMCaIp-&usqp=CAU" width="40" style="float:left;"> 
 >* Permite a criação de todas as etapas da construção de linguagens de máquina, ou seja, como a máquina vai interpretar as entradas posteriormente, exemplos: LALR (Look-Ahead de decidibilidade canônica), SLRs (ações, sendo estas: state, left or right), etc. Auxilia na construção de compiladores. 
 
+> <img src="https://avatars.githubusercontent.com/u/13810373?s=280&v=4" width="40" style="float:left;"> 
+>* Utilizei o AdonisJS apenas para conhecer a ferramenta (lib), achei legal pelo fato de o pacote garantir a configuração inicial de um projeto node, gerando as dependências e configurações, tanto do express, ou o cors quanto do BD com diretórios para migrações já montados, ou seja, facilita muito para acelerar a aprendizagem de Javascript e Typescript, entretanto, para os devs mais antigos, essa funcionalidade chega ser contextada, quase um no code para iniciar o projeto, afinal, de certa forma estes estão habituados a desenvolver todas as etapas dos serviços existentes na API, o que garante também o maior entendimento do projeto quando assim feito, particularmente, gostei do pacote.
+
+> <img src="https://cdn.iconscout.com/icon/free/png-256/sequelize-2-1175003.png" width="40" style="float:left;"> 
+>* O Sequelize foi o único ORM que tive contato, gosto bastante e sempre que posso utilizo a ferramenta, gosto das migrações com ele e também da quantidade de querys que facilitam as chamadas no banco de dados. 
+
+
 <br><br>
 
 
@@ -107,11 +114,18 @@ Identificando algumas ferramentas e serviços na construção de projetos que ai
 >* Meu preferido, embora tenha limitações de memória, anualmente eu procuro utilizar, afinal, sempre existem projetos (mesmo que residênciais) a serem elaborados. 
 
 
-> <img src="https://colab.research.google.com/img/colab_favicon_256px.png" width="40" style="float:left;"> 
+> <img src="https://www.nesabamedia.com/wp-content/uploads/2022/04/DBeaver-Logo-1.png" width="40" style="float:left;"> 
+>* Com o Dbeaver fiz testes de conexões e importação e exportação de dados massivos de um BD, aliás, o software é muito integro para estas funcionalidades.
+
+> <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Google_Colaboratory_SVG_Logo.svg/800px-Google_Colaboratory_SVG_Logo.svg.png?20221103151432" width="40" style="float:left;"> 
 >* Esta plataforma foi muito útil na criação de notebooks e assim como o Jupyter, foi útil para aprendizagem de máquina, permitindo a criação de alguns robozitos, porém, o Colab, por ser um serviço leve e em nuvem acabei utilizando mais vezes.
+
 
 > <img src="https://seeklogo.com/images/G/google-cloud-logo-ADE788217F-seeklogo.com.png" width="40" style="float:left;"> 
 >* O Google Cloud Platform foi um dos servidores que usei apenas para testes que surgiram em meio a graduação, ainda estou nos primeiros contatos mas pretendo me aprofundar mais na utilização dos recursos.
+
+> <img src="https://cdn2.downdetector.com/static/uploads/logo/aws-logo-icon-PNG-Transparent-Background_3.png" width="40" style="float:left;"> 
+>* Juro que já contextei a AWS, mas é a pioneira e atualmente uma das minhas plataformas preferidas, quando preciso de uma VM ou serviços quaisquer em cloud, penso sempre na Amazon Web Services.
 
 > <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Apache_HTTP_server_logo_%282019-present%29.svg/1200px-Apache_HTTP_server_logo_%282019-present%29.svg.png" width="40" style="float:left;"> 
 >* Através do servidor Apache consegui configurar muitos outros serviços intermediado pelo http, considero um dos servidores mais integrativos para testar diferentes protocolos e serviços atualmente.
@@ -126,11 +140,17 @@ Identificando algumas ferramentas e serviços na construção de projetos que ai
 > <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsUFUEH_OdCUK7CLOHJo1zQjwGpn53tq9glV4H2Bm5qLdbXMGdLbAxV054XkQsFIr1-S4&usqp=CAU" width="40" style="float:left;"> 
 >* Acredito que todo dev adepto a depuração dos services tem contato com o Postman, é uma API simples. Aliás, como prefiro desenvolver o back-end, acredito que tive uma familiarização rápida com o Postman.
 
+> <img src="https://user-images.githubusercontent.com/2575745/67964810-4d9a2980-fbd7-11e9-8cf7-661ded187ee6.png" width="40" style="float:left;"> 
+>* Assim como o Postman, o Insomnia atende muito bem para depuração dos end-points. Sendo uma API simples e completa.
+
 > <img src="https://res.cloudinary.com/practicaldev/image/fetch/s--lrfDQ0H1--/c_fill,f_auto,fl_progressive,h_320,q_auto,w_320/https://dev-to-uploads.s3.amazonaws.com/uploads/organization/profile_image/123/38b10714-65da-4f1d-88ae-e9b28c1d7a5e.png" width="40" style="float:left;"> 
 >* utilizo o Heroku para deployar/buildar apps, entretanto, considerei utilizar somente para os back-end/api. A plataforma tem atendido perfeitamente todas as minhas necessidades atualmente. 
 
 > <img src="https://seeklogo.com/images/N/netlify-logo-BD8F8A77E2-seeklogo.com.png" width="40" style="float:left;"> 
->* Utilizo/utilizei o Netlify para deploy front-end. Testei outras plataformas e realmente achei uma simplicidade em deployments com o Netlify, um exemplo é não ter que utilizar webpacks fora do projeto, como por exemplo inclusão do babel.
+>* Utilizei o Netlify para deploy front-end. Testei outras plataformas e realmente achei uma simplicidade em deployments com o Netlify, um exemplo é não ter que utilizar webpacks fora do projeto, como por exemplo inclusão do babel.
+
+> <img src="https://camo.githubusercontent.com/add2c9721e333f0043ac938f3dadbc26a282776e01b95b308fcaba5afaf74ae3/68747470733a2f2f6173736574732e76657263656c2e636f6d2f696d6167652f75706c6f61642f76313538383830353835382f7265706f7369746f726965732f76657263656c2f6c6f676f2e706e67" width="40" style="float:left;"> 
+>* Utilizo o Vercel para deploy das aplicações com React, simples, intuitivo, ótimo de usar, atendeu muito bem em todas as vezes que precisei, utilizo e indico, melhor referência de versionamento em nuvem atualmente. 
 
 > <img src="https://cdn-icons-png.flaticon.com/512/5968/5968866.png" width="40" style="float:left;"> 
 >* O Github é o único servidor qual tenho upado meus projetos, penso em migrar para o Gitlab sempre, mas pelo hábito contínuo no Github.
