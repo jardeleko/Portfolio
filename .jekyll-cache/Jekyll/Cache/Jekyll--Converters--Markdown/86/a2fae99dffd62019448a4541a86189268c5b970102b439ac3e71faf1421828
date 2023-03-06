@@ -1,42 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="/portfolio/assets/main.css">
-    <link rel="icon" href=/portfolio/assets/sbg.jpg style="border-radius: 40%;">
-    <title>Jardel Osorio Duarte</title>
-  </head><body>
-    <div class="container"><header class="masthead">
-  <h1 class="masthead-title">
-    <a href="/portfolio/">Jardel Osorio Duarte<span style="font-size:20px; color: rgb(100, 100, 100);"> Portfólio</span></a>
-  </h1>  
-  <nav class="masthead-nav">
-    
-      <a href="/portfolio/404.html"></a>
-    
-      <a href="/portfolio/about/">Biografia</a>
-    
-      <a href="/portfolio/curriculum">Currículo Lattes</a>
-    
-      <a href="/portfolio/"></a>
-    
-      <a href="/portfolio/tools">Ferramentas</a>
-    
-      <a href="/portfolio/assets/main.css"></a>
-    
-      <a href="/portfolio/feed.xml"></a>
-    
-  </nav>
-</header><article class="post">
-
-  <header class="post-header">
-    <h3 class="masthead-title">Ferramentas</h3>
-  </header>
-
-  <div class="post-content">
-    <p>Identificando algumas ferramentas e serviços na construção de projetos que ainda utilizo ou que tive gosto de ter tido contato, para isso, separei o conteúdo em quatro partes buscando organizar cada método.</p>
+I"?M<p>Identificando algumas ferramentas e serviços na construção de projetos que ainda utilizo ou que tive gosto de ter tido contato, para isso, separei o conteúdo em quatro partes buscando organizar cada método.</p>
 
 <ol>
   <li>Em primeiro, selecionei algumas linguagens que fazem parte da bagagem necessária para aprendizagem e elaboração dos projetos, houveram diversas outros que acabei tendo contato, entretanto, identifiquei algumas que realmente precisavam estar nesta seleção e justifiquei para o melhor entendimento.</li>
@@ -265,7 +227,7 @@
 </blockquote>
 
 <blockquote>
-  <p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Google_Colaboratory_SVG_Logo.svg/800px-Google_Colaboratory_SVG_Logo.svg.png?20221103151432" width="40" style="float:left;" /></p>
+  <p><img src="https://colab.research.google.com/img/colab_favicon_256px.png" width="40" style="float:left;" /></p>
   <ul>
     <li>Esta plataforma foi muito útil na criação de notebooks e assim como o Jupyter, foi útil para aprendizagem de máquina, permitindo a criação de alguns robozitos, porém, o Colab, por ser um serviço leve e em nuvem acabei utilizando mais vezes.</li>
   </ul>
@@ -275,13 +237,6 @@
   <p><img src="https://seeklogo.com/images/G/google-cloud-logo-ADE788217F-seeklogo.com.png" width="40" style="float:left;" /></p>
   <ul>
     <li>O Google Cloud Platform foi um dos servidores que usei apenas para testes que surgiram em meio a graduação, ainda estou nos primeiros contatos mas pretendo me aprofundar mais na utilização dos recursos.</li>
-  </ul>
-</blockquote>
-
-<blockquote>
-  <p><img src="https://cdn2.downdetector.com/static/uploads/logo/aws-logo-icon-PNG-Transparent-Background_3.png" width="40" style="float:left;" /></p>
-  <ul>
-    <li>Juro que já contextei a AWS, mas é a pioneira e atualmente uma das minhas plataformas preferidas, quando preciso de uma VM ou serviços quaisquer em cloud, penso sempre na Amazon Web Services.</li>
   </ul>
 </blockquote>
 
@@ -361,31 +316,4 @@
     <li>O RPi é um dos dispositivos que mantenho executando boa parte do tempo, atualmente, o meu ta com OS Lakka para emular alguns consoles, ainda existem desafios para implementação na máquina, por razão deste possuir um hardware com certa capacidade, se comparado aos demais.</li>
   </ul>
 </blockquote>
-
-  </div>
-
-</article>
-
-    </div><footer class="site-footer h-card">
-  <data class="u-url" href="/portfolio/"></data>
-
-  <div class="wrapper">
-    <div class="footer-col-wrapper">
-      <div class="footer-col footer-col-1">
-        <ul class="contact-list">
-          <li class="p-name">Jardel Osorio Duarte</li><li><a class="u-email" href="mailto:jardelduarte594@gmail.com">jardelduarte594@gmail.com</a></li></ul>
-      </div>
-
-      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/jardeleko"><svg class="svg-icon"><use xlink:href="/portfolio/assets/minima-social-icons.svg#github"></use></svg> <span class="username">jardeleko</span></a></li><li><a href="https://www.linkedin.com/in/jardeleko"><svg class="svg-icon"><use xlink:href="/portfolio/assets/minima-social-icons.svg#linkedin"></use></svg> <span class="username">jardeleko</span></a></li></ul>
-</div>
-
-      <div class="footer-col footer-col-3">
-        <p>Página destinada a expor alguns projetos e ferramentas qual já tenho certa familiaridade.  Inclúindo: curriculum lattes, publicações relacionadas a minha linha de pesquisa e áreas de interesse.</p>
-      </div>
-    </div>
-
-  </div>
-
-</footer>
-</body>
-</html>
+:ET
