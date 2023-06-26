@@ -1,0 +1,12 @@
+I"S<p>O trabalho consistiu na criação de uma página estática com o objetivo de oferecer vagas de garagem de um estacionamento. A escolha foi feita a partir de um template simples em <code class="language-plaintext highlighter-rouge">HTML</code> e no desenvolvimento utilizei apenas o <code class="language-plaintext highlighter-rouge">React</code>.</p>
+
+<p>Por ser um site que deveria gerar empatia com o cliente, optei por algo simples e funcional, evitando a inclusão de milhares de linhas e páginas desnecessárias. Considero que estamos vivendo em uma era mediática, com fotos, vídeos, gifs, entre outros, o que torna o simples e informativo suficiente para alcançar um determinado público.</p>
+
+<p>Para a criação do site, utilizei o básico: o <code class="language-plaintext highlighter-rouge">Bootstrap</code> para grids, o <code class="language-plaintext highlighter-rouge">jQuery</code> para os eventos e o famoso <code class="language-plaintext highlighter-rouge">HTML</code> para estruturar as tags <code class="language-plaintext highlighter-rouge">CSS</code>. Houve também desafios, como a tentativa frustrante de incluir um micro serviço (<code class="language-plaintext highlighter-rouge">API</code> ou <code class="language-plaintext highlighter-rouge">SMTP</code>) para o envio de e-mails e newsletters, mas acabei desistindo, pois considerei custoso demais para o momento, o que inviabilizaria o projeto. No entanto, espero que gostem…</p>
+
+<p>Para acessar o projeto, basta clicar <a href="https://garagens.vercel.app/">aqui</a>.</p>
+
+<p><br /></p>
+
+<!-- [Stripe]: https://stripe.com -->
+:ET
